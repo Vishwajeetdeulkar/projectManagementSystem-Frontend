@@ -28,19 +28,31 @@ export class ManagerLoginComponent implements OnInit {
   }
 
   onSubmit(){
-    this.loginService.managerLogin(this.credentials).subscribe(
+    this.loginService.login(this.credentials).subscribe(
         (response:any) => {
-          localStorage.setItem("SessionUser",response);
+          console.log("response")
+          localStorage.setItem("SessionUser",response["token"]);
+          this.loginService.managerPing().subscribe(
+            (response:any)=>{
+              console.log("get response of ping")
+              this.route.navigateByUrl("/managerDashboard");
+            },
+            (error:any) => {
+              console.log(error);
+            }
+          )
+
         },
         (error:any) => {
           console.log(error);
         }
     );
 
-    if(this.auth.getToken())
-    {
-      this.route.navigateByUrl("/managerDashboard")
-    }
-    window.location.reload();
+    // if(this.auth.getToken())
+    // {
+    //   this.route.navigateByUrl("/managerDashboard")
+    // }
+    // window.location.reload();
   }
+
 }
