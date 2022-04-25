@@ -1,0 +1,56 @@
+<mat-sidenav-container class="example-container">
+    <mat-sidenav mode="side" class="py-3" opened>
+        <div class="addProject my-2" id="addButton">
+            <button (click)="addProjectDisplay()"   mat-button>
+                <mat-icon>add</mat-icon>
+                Add Project
+            </button>
+        </div>
+
+        <div *ngFor="let project of projects,let idx=index" class="addProject my-3"  id="pro{{idx}}"> 
+            <button (click)="projectDisplay(idx)"  mat-button>
+                <mat-icon>work</mat-icon>
+                {{project}}
+            </button>
+        </div>
+
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div *ngIf="addProject" class="m-3">
+            <div class="m-auto ">
+                <div >
+                    <span class="fs-4 pt-5 mx-3 fw-bold" >
+                      Add new Project
+                    </span>
+                </div>
+                <div class="pt-3 ">
+                    <mat-form-field style="width: 30%;"   appearance="outline">
+                        <mat-label >Project Name</mat-label>
+                        <input [(ngModel)]="projectDetails.name" name="name" id="name" type="text" class="form-control" matInput>
+                    </mat-form-field>
+                    <mat-form-field style="width: 80%;" appearance="outline">
+                        <mat-label >Project description</mat-label>
+                        <textarea [(ngModel)]="projectDetails.description" name="description" id="description" type="text" class="form-control"matInput></textarea>
+                    </mat-form-field>
+                </div>
+                <div class="center" style="width: 40%;">    
+                    <button  class="mx-2" type="button" (click)="addProjectDetails()"   style="align-content: center;width: 30%" mat-raised-button color="primary" >
+                        Add Project
+                      </button>
+                    <button  class="mx-2" type="button"  (click)="reset()"   style="align-content: center;width: 30%" mat-raised-button color="accent" >
+                        Reset Details
+                    </button>
+
+                </div>          
+            </div>
+        </div>    
+        <div *ngIf="!addProject">
+            <div class="text-center mt-5">
+                <p>Display project {{projectDisplayIdx}} details</p>
+            </div>
+
+        </div>    
+        
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  

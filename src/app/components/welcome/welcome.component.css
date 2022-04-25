@@ -1,0 +1,22 @@
+.login-option-box-item {
+    width: 140px;
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 5px;
+    padding-top: 1.5rem;
+    margin: 0 12px;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 17px 1px #ddd;
+}
+
+.bg {
+    background: linear-gradient(90deg, #CBC3E3 0%, #CF9FFF 100%);
+    height: 100%;
+  }
+
+  
+.container {
+      margin: 0;
+}
+    

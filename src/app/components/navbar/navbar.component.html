@@ -1,0 +1,14 @@
+<mat-toolbar color="primary">
+    <p class="fs-3" routerLink="/" mat-button>
+      Project Management System
+    </p>
+    
+    <span class="example-spacer"></span>
+    
+    <button *ngIf="isLoggedIn" (click)="logout()"  mat-button>
+        Logout
+    </button>
+  
+</mat-toolbar>
+  
+  

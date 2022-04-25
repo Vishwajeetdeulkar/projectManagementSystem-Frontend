@@ -1,0 +1,22 @@
+.example-container {
+    height: 100%;
+    background:  #ebe5f0;
+  }
+
+mat-sidenav {
+    width: 13%; 
+    background-color: #673ab7;
+    color:white ;
+    border: none; 
+}
+
+.addProject{
+    margin-left: 20px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    background-color: white;
+    border-radius: 5px;
+  }
