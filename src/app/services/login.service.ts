@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -6,7 +7,16 @@ import { Router } from '@angular/router';
 })
 export class LoginService {
 
-  constructor(private router:Router) { }
+
+  
+  url = "http://localhost:5050";
+  
+  constructor(private router:Router,private http:HttpClient) { }
+
+  managerLogin(credentials:any){
+    return this.http.post(`${this.url}/token`, credentials)
+  }
+
 
   login(credentials:any){
     localStorage.setItem("SessionUser",credentials.username);

@@ -28,7 +28,14 @@ export class ManagerLoginComponent implements OnInit {
   }
 
   onSubmit(){
-    this.loginService.login(this.credentials);
+    this.loginService.managerLogin(this.credentials).subscribe(
+        (response:any) => {
+          localStorage.setItem("SessionUser",response);
+        },
+        (error:any) => {
+          console.log(error);
+        }
+    );
 
     if(this.auth.getToken())
     {
