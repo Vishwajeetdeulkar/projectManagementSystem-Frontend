@@ -29,13 +29,25 @@ export class EmployeeLoginComponent implements OnInit {
   }
 
   onSubmit(){
-    this.loginService.login(this.credentials);
+    this.loginService.login(this.credentials).subscribe(
+      (response:any) => {
+        console.log("response")
+        localStorage.setItem("SessionUser",response["token"]);
+        this.loginService.employeePing().subscribe(
+          (response:any)=>{
+            console.log("get response of ping")
+            this.route.navigateByUrl("/employeeDashboard");
+          },
+          (error:any) => {
+            console.log(error);
+          }
+        )
 
-    if(this.auth.getToken())
-    {
-      this.route.navigateByUrl("/employeeDashboard")
-    }
-    window.location.reload();
+      },
+      (error:any) => {
+        console.log(error);
+      }
+    );
   }
 
 }
