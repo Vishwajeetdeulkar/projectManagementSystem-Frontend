@@ -21,6 +21,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatTableModule} from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { MatInputModule } from '@angular/material/input';
     MatSidenavModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatTableModule
   ],
   providers: [AuthguardService],
   bootstrap: [AppComponent]

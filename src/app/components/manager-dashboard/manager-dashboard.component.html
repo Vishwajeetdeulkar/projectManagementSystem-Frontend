@@ -10,7 +10,7 @@
         <div *ngFor="let project of projects,let idx=index" class="addProject my-3"  id="pro{{idx}}"> 
             <button (click)="projectDisplay(idx)"  mat-button>
                 <mat-icon>work</mat-icon>
-                {{project}}
+                {{project.name}}
             </button>
         </div>
 
@@ -44,12 +44,170 @@
                 </div>          
             </div>
         </div>    
-        <div *ngIf="!addProject">
-            <div class="text-center mt-5">
-                <p>Display project {{projectDisplayIdx}} details</p>
+        <div *ngIf="!addProject" class="m-3">
+            <div class="m-auto">
+                <div>
+                    <div class="projectName py-3">
+                        <span class="fs-4 pt-3 mx-3 fw-bold " >
+                            <!-- {{projectDisplayIdx}} -->
+                        {{projects[projectDisplayIdx].name}}
+                        <mat-icon class="fs-6" *ngIf="editDetailsDesabled"  (click)="editDescription(projectDisplayIdx)">edit</mat-icon>
+                        <mat-icon class="fs-6" *ngIf="!editDetailsDesabled"  (click)="saveDescription(projectDisplayIdx)">save</mat-icon>
+                        </span>
+                        <button [disabled]="!teamMember" (click)="showTeamMember()"   mat-button>
+                            <mat-icon>group_work</mat-icon>
+                            Team 
+                        </button>
+                        <button [disabled]="!task" (click)="showTask()"   mat-button>
+                            <mat-icon> list</mat-icon>
+                            Task
+                        </button>
+                        <button [disabled]="!effort" (click)="showEffort()"   mat-button>
+                            <mat-icon>donut_small</mat-icon>
+                            Effort
+                        </button>
+                    </div>
+                    <div class="pt-3 ">
+                        <mat-form-field style="width: 80%;" appearance="outline">
+                            <mat-label >Project description</mat-label>
+                            <textarea [disabled]="editDetailsDesabled" [(ngModel)]="projects[projectDisplayIdx].description" name="description" id="description" type="text" class="form-control"matInput></textarea>
+                        </mat-form-field>
+                       
+                    </div>
+                </div> 
+                <div *ngIf="!teamMember" class="mt-1">
+                    <div class="projectName py-3">
+                        <span class="fs-4 pt-5 mx-3 fw-bold " >
+                            <!-- {{projectDisplayIdx}} -->
+                        Team Mamber List
+                        </span>
+                    </div>
+                    <div class="pt-3 ">
+                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                            <!--- Note that these columns can be defined in any order.
+                                  The actual rendered columns are set as a property on the row definition" -->
+                          
+                            <!-- Position Column -->
+                            <ng-container matColumnDef="id">
+                              <th mat-header-cell *matHeaderCellDef> Id </th>
+                              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                            </ng-container>
+                          
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="name">
+                              <th mat-header-cell *matHeaderCellDef> Name </th>
+                              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                            </ng-container>
+                          
+                            
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="email">
+                                <th mat-header-cell *matHeaderCellDef> Email </th>
+                                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+                              </ng-container>
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="businessTitle">
+                              <th mat-header-cell *matHeaderCellDef> Title </th>
+                              <td mat-cell *matCellDef="let element"> {{element.businessTitle}} </td>
+                            </ng-container>
+                          
+                          
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                          </table>
+                    </div>
+                </div>
+                <div *ngIf="!task" class="mt-1">
+                    <div class="projectName py-3">
+                        <span class="fs-4 pt-5 mx-3 fw-bold " >
+                            <!-- {{projectDisplayIdx}} -->
+                        Task List
+                        </span>
+                    </div>
+                    <div class="pt-3 ">
+                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                            <!--- Note that these columns can be defined in any order.
+                                  The actual rendered columns are set as a property on the row definition" -->
+                          
+                            <!-- Position Column -->
+                            <ng-container matColumnDef="id">
+                              <th mat-header-cell *matHeaderCellDef> Id </th>
+                              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                            </ng-container>
+                          
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="name">
+                              <th mat-header-cell *matHeaderCellDef> Name </th>
+                              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                            </ng-container>
+                          
+                            
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="email">
+                                <th mat-header-cell *matHeaderCellDef> Email </th>
+                                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+                              </ng-container>
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="businessTitle">
+                              <th mat-header-cell *matHeaderCellDef> Title </th>
+                              <td mat-cell *matCellDef="let element"> {{element.businessTitle}} </td>
+                            </ng-container>
+                          
+                          
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                          </table>
+                    </div>
+                </div>
+                <div *ngIf="!effort" class="mt-1">
+                    <div class="projectName py-3">
+                        <span class="fs-4 pt-5 mx-3 fw-bold " >
+                            <!-- {{projectDisplayIdx}} -->
+                        Effort Management
+                        </span>
+                    </div>
+                    <div class="pt-3 ">
+                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                            <!--- Note that these columns can be defined in any order.
+                                  The actual rendered columns are set as a property on the row definition" -->
+                          
+                            <!-- Position Column -->
+                            <ng-container matColumnDef="id">
+                              <th mat-header-cell *matHeaderCellDef> Id </th>
+                              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                            </ng-container>
+                          
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="name">
+                              <th mat-header-cell *matHeaderCellDef> Name </th>
+                              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                            </ng-container>
+                          
+                            
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="email">
+                                <th mat-header-cell *matHeaderCellDef> Email </th>
+                                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+                              </ng-container>
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="businessTitle">
+                              <th mat-header-cell *matHeaderCellDef> Title </th>
+                              <td mat-cell *matCellDef="let element"> {{element.businessTitle}} </td>
+                            </ng-container>
+                          
+                          
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                          </table>
+                    </div>
+                </div>
             </div>
 
-        </div>    
+        </div>
+            
         
     </mat-sidenav-content>
   </mat-sidenav-container>

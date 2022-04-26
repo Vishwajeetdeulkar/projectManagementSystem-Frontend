@@ -13,9 +13,11 @@ export class LoginService {
 
   constructor(private router:Router,private http:HttpClient) { }
 
-  // managerLogin(credentials:any){
-  //   return this.http.post(`${this.url}/users/authenticate`, credentials)
-  // }
+  login(credentials:any){
+    return this.http.post(`${this.url}/users/authenticate`, credentials)
+  }
+
+
   managerPing(){
     let token = localStorage.getItem("SessionUser");
     let header = new HttpHeaders(
@@ -25,13 +27,7 @@ export class LoginService {
     );
     return this.http.get(`${this.url}/users/managerping`,{'headers':header})
   }
-  // employeeLogin(credentials:any){
-  //   return this.http.post(`${this.url}/users/authenticate`, credentials);
-  // }
 
-  // employeeLogin(credentials:any){
-  //   return this.http.post(`${this.url}/users/authenticate`, credentials)
-  // }
   employeePing(){
     let token = localStorage.getItem("SessionUser");
     let header = new HttpHeaders(
@@ -41,8 +37,15 @@ export class LoginService {
     );
     return this.http.get(`${this.url}/users/employeeping`,{'headers':header})
   }
-  login(credentials:any){
-    return this.http.post(`${this.url}/users/authenticate`, credentials)
+
+  adminPing(){
+    let token = localStorage.getItem("SessionUser");
+    let header = new HttpHeaders(
+      {
+        Authorization  : "Bearer " + token
+      }
+    );
+    return this.http.get(`${this.url}/users/adminping`,{'headers':header})
   }
 
 
