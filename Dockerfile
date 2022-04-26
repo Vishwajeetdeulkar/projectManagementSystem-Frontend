@@ -9,6 +9,7 @@ WORKDIR /usr/local/app
 # Add the source code to app
 COPY ./ /usr/local/app/
 
+RUN npm config set legacy-peer-deps true
 # Install all the dependencies
 RUN npm install
 
@@ -22,7 +23,7 @@ RUN npm run build
 FROM nginx:latest
 
 # Copy the build output to replace the default nginx contents.
-COPY --from=build /usr/local/app/dist/projectManagementSystem-Frontend /usr/share/nginx/html
+COPY --from=build /usr/local/app/dist/project-management-system /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
