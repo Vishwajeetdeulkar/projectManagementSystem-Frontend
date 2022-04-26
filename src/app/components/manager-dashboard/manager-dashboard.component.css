@@ -20,3 +20,12 @@ mat-sidenav {
     background-color: white;
     border-radius: 5px;
   }
+
+.projectName {
+  border-bottom: #673ab7 2px solid;
+  border-top: #673ab7 2px solid;
+  color: #673ab7;
+}
+table {
+  width: 100%;
+}

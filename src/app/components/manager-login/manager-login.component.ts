@@ -23,7 +23,16 @@ export class ManagerLoginComponent implements OnInit {
   ngOnInit(): void {
     if(this.auth.getToken())
     {
-      this.route.navigateByUrl("/managerDashboard")
+      this.loginService.managerPing().subscribe(
+        (response:any)=>{
+          console.log("get response of ping")
+          this.route.navigateByUrl("/managerDashboard");
+        },
+        (error:any) => {
+          console.log(error);
+          this.route.navigateByUrl("/welcome");
+        }
+      )
     }
   }
 

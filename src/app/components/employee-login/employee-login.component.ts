@@ -22,9 +22,18 @@ export class EmployeeLoginComponent implements OnInit {
   constructor(private loginService:LoginService,private route:Router,private auth:AuthguardService) { }
 
   ngOnInit(): void {
-    if(this.auth.getToken())
+     if(this.auth.getToken())
     {
-      this.route.navigateByUrl("/employeeDashboard")
+      this.loginService.employeePing().subscribe(
+        (response:any)=>{
+          console.log("get response of ping")
+          this.route.navigateByUrl("/employeeDashboard");
+        },
+        (error:any) => {
+          console.log(error);
+          this.route.navigateByUrl("/welcome")
+        }
+      )
     }
   }
 
