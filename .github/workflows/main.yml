@@ -40,7 +40,6 @@ jobs:
       # build and test the apps     
       - name: build
         run: |
-          npm config set legacy-peer-deps true
           npm run build
           npm run test
   push_to_Docker_Hub:
