@@ -40,6 +40,12 @@ export class EmployeeDashboardComponent implements OnInit {
   constructor(private loginService:LoginService,private route:Router,private auth:AuthguardService) { }
 
   ngOnInit(): void {
+    if (!localStorage.getItem('foo')) { 
+      localStorage.setItem('foo', 'no reload') 
+      location.reload() 
+    } else {
+      localStorage.removeItem('foo') 
+    }
     if(this.auth.getToken())
     {
       this.loginService.employeePing().subscribe(

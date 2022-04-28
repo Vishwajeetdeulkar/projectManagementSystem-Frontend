@@ -25,6 +25,8 @@ import {MatTableModule} from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import {MatChipsModule} from '@angular/material/chips';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { AdminLoginComponent } from './components/admin-login/admin-login.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import {MatChipsModule} from '@angular/material/chips';
     EmployeeDashboardComponent,
     ManagerLoginComponent,
     EmployeeLoginComponent,
+    AdminDashboardComponent,
+    AdminLoginComponent,
 
   ],
   imports: [
