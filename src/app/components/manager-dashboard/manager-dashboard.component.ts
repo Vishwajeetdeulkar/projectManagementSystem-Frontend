@@ -1,10 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild,OnInit, SimpleChange } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthguardService } from 'src/app/services/authguard.service';
 import { LoginService } from 'src/app/services/login.service';
 import {FormControl} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { elementAt } from 'rxjs';
+import { ChartComponent } from 'ng-apexcharts';
+import { ApexNonAxisChartSeries, ApexResponsive, ApexChart } from "ng-apexcharts";
+
+
+export type ChartOptions = {
+  series: ApexNonAxisChartSeries;
+  chart: ApexChart;
+  responsive: ApexResponsive[];
+  labels: any;
+};
 
 
 @Component({
@@ -23,15 +32,24 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   taskDetails = {
-    id:'',
     name:'',
     desc:'',
-    emp:{id:'',name:'',email:'',businessTitle:''}
+    emp:{id:0,name:'',email:'',businessTitle:''}
+  }
+
+  effortDetails = {
+    date:'',
+    rah:0,
+    dh:0,
+    ch:0,
+    th:0,
+    pmh:0
   }
 
   editDetailsDisabled:any;
   editTeamDetailsDisabled:any;
   editTaskDetailsDisabled:any;
+  editEffortDetailsDisabled:any;
 
   addProject:any;
   projectDisplayIdx:any;
@@ -41,39 +59,74 @@ export class ManagerDashboardComponent implements OnInit {
   effort:any;
 
   projectEmployeeData = [
-    {id:'1', name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
-    {id:'2', name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
-    {id:'3', name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
-    {id:'4', name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
+    {id:1, name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
+    {id:2, name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
+    {id:3, name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
+    {id:3, name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
   ]
 
   employeeData = [
-    {id:'1', name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
-    {id:'2', name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
-    {id:'3', name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
-    {id:'4', name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
+    {id:1, name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
+    {id:2, name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
+    {id:3, name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
+    {id:4, name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
   ]
 
   taskData = [
-    {id:'1', name:'task1',desc:'desc1',emp:{id:'1', name:'name1',email:'email1@gmail.com', businessTitle:"title1" }},
-    {id:'2', name:'task2',desc:'desc2',emp:{id:'2', name:'name2',email:'email1@gmail.com', businessTitle:"title2" }},
-    {id:'3', name:'task3',desc:'desc3',emp:{id:'3', name:'name3',email:'email1@gmail.com', businessTitle:"title3" } },
-    {id:'4', name:'task4',desc:'desc4',emp:{id:'4', name:'name4',email:'email1@gmail.com', businessTitle:"title4" } },
+    {id:'1', name:'task1',desc:'desc1',status:0,emp:{id:1, name:'name1',email:'email1@gmail.com', businessTitle:"title1" }},
+    {id:'2', name:'task2',desc:'desc2',status:1,emp:{id:2, name:'name2',email:'email1@gmail.com', businessTitle:"title2" }},
+    {id:'3', name:'task3',desc:'desc3',status:2,emp:{id:3, name:'name3',email:'email1@gmail.com', businessTitle:"title3" } },
+    {id:'4', name:'task4',desc:'desc4',status:1,emp:{id:4, name:'name4',email:'email1@gmail.com', businessTitle:"title4" } },
   ]
+
+  // effortData = [
+  //   {date:''}
+  // ]
 
 
 
   teamDisplayedColumns: string[] = ['id', 'name','email', 'businessTitle',"remove"];
   teamDataSource:any;
 
-  taskDisplayedColumns: string[] = ['id','name','desc','emp',"remove"];
+  taskDisplayedColumns: string[] = ['id','name','desc','status','emp',"remove"];
   taskDataSource:any;
 
   addMember = new FormControl();
-  constructor(private loginService:LoginService,private route:Router,private auth:AuthguardService) { }
+  assignEmployee = new FormControl();
+
+  @ViewChild("chart") chart:ChartComponent;
+  public chartOptions:any;
+  // Partial<ChartOptions>;
+
+  constructor(private loginService:LoginService,private route:Router,private auth:AuthguardService) { 
+    
+  }
 
   ngOnInit(): void {
 
+  
+    this.chartOptions = {
+      series: [0,0,0,0,0],
+      chart: {
+        width: 500,
+        type: "pie"
+      },
+      labels: ["Requirment Analysis", "Designing", "Coding", "Testing", "Project Management"],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: "bottom"
+            }
+          }
+        }
+      ]
+    };
+    
     this.teamDataSource = new MatTableDataSource<any>();
     this.teamDataSource.data = this.projectEmployeeData;
 
@@ -140,6 +193,8 @@ export class ManagerDashboardComponent implements OnInit {
     this.editDetailsDisabled = true;
     this.editTeamDetailsDisabled = true;
     this.editTaskDetailsDisabled = true;
+    this.editEffortDetailsDisabled = true;
+    
   }
 
   showTeamMember(){
@@ -194,6 +249,14 @@ export class ManagerDashboardComponent implements OnInit {
     this.editTaskDetailsDisabled = true;
   }
 
+  editEffort(projectDisplayIdx:any){
+    this.editEffortDetailsDisabled = false;
+  }
+
+  saveEffort(projectDisplayIdx:any){
+    this.editEffortDetailsDisabled = true;
+  }
+
   addEmployee()
   {
     this.employeeData.forEach((elemnet,index)=>{
@@ -211,16 +274,34 @@ export class ManagerDashboardComponent implements OnInit {
   addTask()
   {
     console.log("add task");
+    console.log(this.assignEmployee);
+    console.log("after taask")
+    if(this.taskDetails.name=='' || this.taskDetails.desc=='' || this.assignEmployee.value.id == '')
+    {
+      alert("plz enter details");
+      return;
+    }
+    
     let task = {
       id:'10',
       name:this.taskDetails.name,
       desc:this.taskDetails.desc,
+      status:0,
       emp:this.taskDetails.emp
     }
     this.taskData.push(task);
     this.taskDataSource.data = this.taskData;
+    this.taskDetails.desc='';
+    this.taskDetails.name='';
+    this.assignEmployee.setValue(null);
     console.log(this.taskDataSource);
   }
+
+  updateEffort(){
+    this.chartOptions.series = [this.effortDetails.rah, this.effortDetails.dh, this.effortDetails.ch, this.effortDetails.th,this.effortDetails.pmh];
+
+  }
+
 
   removeTask(id:any)
   {
@@ -234,6 +315,7 @@ export class ManagerDashboardComponent implements OnInit {
     });
     
     this.taskDataSource.data = this.taskData;
+    
     console.log(this.taskDataSource);
   }
 
