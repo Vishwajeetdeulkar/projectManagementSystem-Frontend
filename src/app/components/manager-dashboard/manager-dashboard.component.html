@@ -47,12 +47,12 @@
         <div *ngIf="!addProject" class="m-3">
             <div class="m-auto">
                 <div>
-                    <div class="projectName py-3">
+                    <div class="projectName">
                         <span class="fs-4 pt-3 mx-3 fw-bold " >
                             <!-- {{projectDisplayIdx}} -->
                         {{projects[projectDisplayIdx].name}}
-                        <mat-icon class="fs-6" *ngIf="editDetailsDesabled"  (click)="editDescription(projectDisplayIdx)">edit</mat-icon>
-                        <mat-icon class="fs-6" *ngIf="!editDetailsDesabled"  (click)="saveDescription(projectDisplayIdx)">save</mat-icon>
+                        <mat-icon class="fs-6" *ngIf="editDetailsDisabled"  (click)="editDescription(projectDisplayIdx)">edit</mat-icon>
+                        <mat-icon class="fs-6" *ngIf="!editDetailsDisabled"  (click)="saveDescription(projectDisplayIdx)">save</mat-icon>
                         </span>
                         <button [disabled]="!teamMember" (click)="showTeamMember()"   mat-button>
                             <mat-icon>group_work</mat-icon>
@@ -67,141 +67,237 @@
                             Effort
                         </button>
                     </div>
-                    <div class="pt-3 ">
+                    <div  class="pt-3 ">
                         <mat-form-field style="width: 80%;" appearance="outline">
                             <mat-label >Project description</mat-label>
-                            <textarea [disabled]="editDetailsDesabled" [(ngModel)]="projects[projectDisplayIdx].description" name="description" id="description" type="text" class="form-control"matInput></textarea>
+                            <textarea [disabled]="editDetailsDisabled" [(ngModel)]="projects[projectDisplayIdx].description" name="description" id="description" type="text" class="form-control"matInput></textarea>
                         </mat-form-field>
                        
                     </div>
                 </div> 
                 <div *ngIf="!teamMember" class="mt-1">
-                    <div class="projectName py-3">
+                    <div class="projectName">
                         <span class="fs-4 pt-5 mx-3 fw-bold " >
                             <!-- {{projectDisplayIdx}} -->
                         Team Mamber List
                         </span>
+                        <mat-icon class="fs-5" *ngIf="editTeamDetailsDisabled"  (click)="editTeam(projectDisplayIdx)">edit</mat-icon>
+                        <mat-icon class="fs-5" *ngIf="!editTeamDetailsDisabled"  (click)="saveTeam(projectDisplayIdx)">save</mat-icon>
+                        
+                      
+                    </div>
+                    <div>
+                        <mat-form-field class="w-25"  appearance="outline">
+                            <mat-label>Add Member</mat-label>
+                            <mat-select  [disabled]="editTeamDetailsDisabled" [formControl]="addMember" multiple>
+                              <mat-option *ngFor="let emp of employeeData" [value]="emp.id">{{emp.name}}, {{emp.businessTitle}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <button  [disabled]="editTeamDetailsDisabled" class="mx-2" type="button" (click)="addEmployee()"   style="align-content: center;width: 3%" mat-raised-button color="primary" >
+                            <mat-icon>add</mat-icon>
+                           
+                          </button>
+                      
                     </div>
                     <div class="pt-3 ">
-                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                        <table mat-table [dataSource]="teamDataSource" class="mat-elevation-z8">
 
                             <!--- Note that these columns can be defined in any order.
                                   The actual rendered columns are set as a property on the row definition" -->
                           
                             <!-- Position Column -->
                             <ng-container matColumnDef="id">
-                              <th mat-header-cell *matHeaderCellDef> Id </th>
-                              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                              <th mat-header-cell *matHeaderCellDef class="text-center"> Id </th>
+                              <td mat-cell *matCellDef="let element" class="text-center"> {{element.id}} </td>
                             </ng-container>
                           
                             <!-- Name Column -->
                             <ng-container matColumnDef="name">
-                              <th mat-header-cell *matHeaderCellDef> Name </th>
-                              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                              <th mat-header-cell *matHeaderCellDef class="text-center"> Name </th>
+                              <td mat-cell *matCellDef="let element" class="text-center"> {{element.name}} </td>
                             </ng-container>
                           
                             
                             <!-- Weight Column -->
                             <ng-container matColumnDef="email">
-                                <th mat-header-cell *matHeaderCellDef> Email </th>
-                                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+                                <th mat-header-cell *matHeaderCellDef class="text-center"> Email </th>
+                                <td mat-cell *matCellDef="let element" class="text-center"> {{element.email}} </td>
                               </ng-container>
                             <!-- Weight Column -->
                             <ng-container matColumnDef="businessTitle">
-                              <th mat-header-cell *matHeaderCellDef> Title </th>
-                              <td mat-cell *matCellDef="let element"> {{element.businessTitle}} </td>
+                              <th mat-header-cell *matHeaderCellDef class="text-center"> Title </th>
+                              <td mat-cell *matCellDef="let element" class="text-center"> {{element.businessTitle}} </td>
                             </ng-container>
                           
+                            
+                            <ng-container matColumnDef="remove">
+                              <th mat-header-cell *matHeaderCellDef class="text-center"> Remove </th>
+                              <td mat-cell *matCellDef="let element" class="text-center"> 
+                                <button  [disabled]="editTeamDetailsDisabled" class="mx-2" type="button" (click)="removeEmployee(element.id)"   style="align-content: center;" mat-raised-button color="warm" >
+                                    Remove
+                                </button>
+                              
+                              </td>
+                            </ng-container>
                           
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            <tr mat-header-row *matHeaderRowDef="teamDisplayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: teamDisplayedColumns;"></tr>
                           </table>
                     </div>
                 </div>
                 <div *ngIf="!task" class="mt-1">
-                    <div class="projectName py-3">
+                    <div class="projectName ">
                         <span class="fs-4 pt-5 mx-3 fw-bold " >
-                            <!-- {{projectDisplayIdx}} -->
                         Task List
                         </span>
+                        <mat-icon class="fs-5" *ngIf="editTaskDetailsDisabled"  (click)="editTask(projectDisplayIdx)">edit</mat-icon>
+                        <mat-icon class="fs-5" *ngIf="!editTaskDetailsDisabled"  (click)="saveTask(projectDisplayIdx)">save</mat-icon>
+                    </div>
+                    <div>
+                        <mat-form-field style="width: 20%;"  class="mx-2"  appearance="outline">
+                            <mat-label >Task Name</mat-label> 
+                            <input [disabled]="editTaskDetailsDisabled" [(ngModel)]="taskDetails.name" name="name" id="name" type="text" class="form-control"  matInput>
+                        </mat-form-field>
+                        <mat-form-field style="width: 42%;"   class="mx-2" appearance="outline">
+                            <mat-label >Task description</mat-label>
+                            <input [disabled]="editTaskDetailsDisabled" [(ngModel)]="taskDetails.desc" name="description" id="description" type="text" class="form-control"matInput >    
+                        </mat-form-field>  
+                        <mat-form-field class="w-25 mx-2"   appearance="outline">
+                            <mat-label>Assign Employee</mat-label>
+                            <mat-select  [disabled]="editTaskDetailsDisabled"  [formControl]="assignEmployee" [(ngModel)]="taskDetails.emp" >
+                              <mat-option *ngFor="let emp of employeeData" [value]="emp">{{emp.name}}, {{emp.businessTitle}} </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                       
+                        <button [disabled]="editTaskDetailsDisabled"  class="mx-2" type="button" (click)="addTask()"  style="align-content: center;width: 3%" mat-raised-button color="primary" >
+                            <mat-icon>add</mat-icon>
+                        </button>
+                        
                     </div>
                     <div class="pt-3 ">
-                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                        <table mat-table [dataSource]="taskDataSource" class="mat-elevation-z8">
 
                             <!--- Note that these columns can be defined in any order.
                                   The actual rendered columns are set as a property on the row definition" -->
                           
                             <!-- Position Column -->
                             <ng-container matColumnDef="id">
-                              <th mat-header-cell *matHeaderCellDef> Id </th>
-                              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                              <th mat-header-cell *matHeaderCellDef class="text-center"> Id </th>
+                              <td mat-cell *matCellDef="let element" class="text-center"> {{element.id}} </td>
                             </ng-container>
                           
                             <!-- Name Column -->
                             <ng-container matColumnDef="name">
-                              <th mat-header-cell *matHeaderCellDef> Name </th>
-                              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                              <th mat-header-cell *matHeaderCellDef class="text-center"> Name </th>
+                              <td mat-cell *matCellDef="let element" class="text-center"> {{element.name}} </td>
                             </ng-container>
                           
                             
                             <!-- Weight Column -->
-                            <ng-container matColumnDef="email">
-                                <th mat-header-cell *matHeaderCellDef> Email </th>
-                                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-                              </ng-container>
-                            <!-- Weight Column -->
-                            <ng-container matColumnDef="businessTitle">
-                              <th mat-header-cell *matHeaderCellDef> Title </th>
-                              <td mat-cell *matCellDef="let element"> {{element.businessTitle}} </td>
+                            <ng-container matColumnDef="desc">
+                                <th mat-header-cell *matHeaderCellDef class="text-center"> Description </th>
+                                <td mat-cell *matCellDef="let element" class="text-center"> {{element.desc}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef class="text-center"> Status </th>
+                                <td mat-cell *matCellDef="let element" class="text-center"> 
+                                    <button mat-button *ngIf="element.status==0" class="pending" > 
+                                        pendding
+                                    </button>
+                                    <button mat-button *ngIf="element.status==1" class="working" >
+                                        working
+                                    </button>
+                                    <button mat-button *ngIf="element.status==2" class="completed">
+                                        completed
+                                    </button>                                              
+                                </td>
                             </ng-container>
                           
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="emp">
+                              <th mat-header-cell *matHeaderCellDef class="text-center"> Employee </th>
+                              <td mat-cell  *matCellDef="let element" class="text-center"> {{element.emp.name}}, {{element.emp.businessTitle}} </td>
+                            </ng-container>
                           
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            
+                            <ng-container matColumnDef="remove">
+                              <th mat-header-cell *matHeaderCellDef class="text-center"> Remove </th>
+                              <td mat-cell *matCellDef="let element" class="text-center"> 
+                                <button  [disabled]="editTaskDetailsDisabled" class="mx-2" type="button" (click)="removeTask(element.id)"   style="align-content: center;" mat-raised-button color="warm" >
+                                    Remove
+                                </button>
+                              </td>
+                            </ng-container>
+                          
+                            <tr mat-header-row *matHeaderRowDef="taskDisplayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: taskDisplayedColumns;"></tr>
                           </table>
                     </div>
                 </div>
                 <div *ngIf="!effort" class="mt-1">
-                    <div class="projectName py-3">
+                    <div class="projectName">
                         <span class="fs-4 pt-5 mx-3 fw-bold " >
-                            <!-- {{projectDisplayIdx}} -->
                         Effort Management
                         </span>
+                        
+                        <mat-icon class="fs-5" *ngIf="editEffortDetailsDisabled"  (click)="editEffort(projectDisplayIdx)">edit</mat-icon>
+                        <mat-icon class="fs-5" *ngIf="!editEffortDetailsDisabled"  (click)="saveEffort(projectDisplayIdx)">save</mat-icon>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-3">
+                            <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
+                                <mat-label >Date</mat-label> 
+                                <input [disabled]="editEffortDetailsDisabled" [(ngModel)]="effortDetails.date" name="name" id="date" type="date" class="form-control"  matInput>
+                            </mat-form-field>
+                            <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
+                                <mat-label >Designing Hours</mat-label> 
+                                <input [disabled]="editEffortDetailsDisabled" [(ngModel)]="effortDetails.dh" name="dh" id="dh" type="number" class="form-control"  matInput>
+                            </mat-form-field>
+                            <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
+                                <mat-label >Testing Hours</mat-label> 
+                                <input [disabled]="editEffortDetailsDisabled" [(ngModel)]="effortDetails.th" name="th" id="th" type="number" class="form-control"  matInput>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-3">
+                            <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
+                                <mat-label >Requirment Analysis Hours</mat-label> 
+                                <input [disabled]="editEffortDetailsDisabled" [(ngModel)]="effortDetails.rah" name="rah" id="rah" type="number" class="form-control"  matInput>
+                            </mat-form-field>
+                            <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
+                                <mat-label >Coding Hours</mat-label> 
+                                <input [disabled]="editEffortDetailsDisabled" [(ngModel)]="effortDetails.ch" name="ch" id="ch" type="number" class="form-control"  matInput>
+                            </mat-form-field>
+                            <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
+                                <mat-label >Project Management Hours</mat-label> 
+                                <input [disabled]="editEffortDetailsDisabled" [(ngModel)]="effortDetails.pmh" name="pmh" id="pmh" type="number" class="form-control"  matInput>
+                            </mat-form-field>
+                            
+                        </div>
+                        <div class="col-6 text-center" id="chart">
+                            <span class="fs-6 pt-5 mx-3  fw-bold " >
+                                Project Effort Distribution
+                                </span>
+                            <apx-chart 
+                                [series]="chartOptions.series"
+                                [chart]="chartOptions.chart"
+                                [labels]="chartOptions.labels"
+                                [responsive]="chartOptions.responsive"
+                            ></apx-chart>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-center">
+                            <button [disabled]="editEffortDetailsDisabled"  class="mx-2" type="button" (click)="updateEffort()"  style="align-content: center;" mat-raised-button color="primary" >
+                                <mat-icon>update</mat-icon>
+                                Update Hours
+                            </button>
+                           
+                        </div>
+
                     </div>
                     <div class="pt-3 ">
-                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
-                            <!--- Note that these columns can be defined in any order.
-                                  The actual rendered columns are set as a property on the row definition" -->
-                          
-                            <!-- Position Column -->
-                            <ng-container matColumnDef="id">
-                              <th mat-header-cell *matHeaderCellDef> Id </th>
-                              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-                            </ng-container>
-                          
-                            <!-- Name Column -->
-                            <ng-container matColumnDef="name">
-                              <th mat-header-cell *matHeaderCellDef> Name </th>
-                              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-                            </ng-container>
-                          
-                            
-                            <!-- Weight Column -->
-                            <ng-container matColumnDef="email">
-                                <th mat-header-cell *matHeaderCellDef> Email </th>
-                                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-                              </ng-container>
-                            <!-- Weight Column -->
-                            <ng-container matColumnDef="businessTitle">
-                              <th mat-header-cell *matHeaderCellDef> Title </th>
-                              <td mat-cell *matCellDef="let element"> {{element.businessTitle}} </td>
-                            </ng-container>
-                          
-                          
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                          </table>
+                        
                     </div>
                 </div>
             </div>

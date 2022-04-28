@@ -23,9 +23,24 @@ mat-sidenav {
 
 .projectName {
   border-bottom: #673ab7 2px solid;
-  border-top: #673ab7 2px solid;
   color: #673ab7;
 }
 table {
   width: 100%;
+}
+
+.pending{
+  background-color: rgb(226, 26, 26);
+  color: white;
+  text-align: center;
+}
+
+.working{
+  background-color: rgb(28, 28, 207);
+  color: white;
+}
+
+.completed{
+  background-color: green;
+  color: white;
 }

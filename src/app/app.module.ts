@@ -22,6 +22,9 @@ import {MatIconModule} from '@angular/material/icon';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatTableModule} from '@angular/material/table';
+import {MatSelectModule} from '@angular/material/select';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import {MatChipsModule} from '@angular/material/chips';
 
 @NgModule({
   declarations: [
@@ -46,7 +49,10 @@ import {MatTableModule} from '@angular/material/table';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTableModule
+    MatTableModule,
+    MatSelectModule,
+    NgApexchartsModule,
+    MatChipsModule
   ],
   providers: [AuthguardService],
   bootstrap: [AppComponent]
