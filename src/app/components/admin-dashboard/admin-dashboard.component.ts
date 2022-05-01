@@ -1,8 +1,16 @@
+import { ThisReceiver } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { elementAt } from 'rxjs';
 import { AdminService } from 'src/app/services/admin.service';
+
+export interface userDetails {
+  id:number,
+  name:string,
+  email:string,
+  businessTitle:string
+}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -30,24 +38,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
 
-  employeeData = [
-    {id:1, name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
-    {id:2, name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
-    {id:3, name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
-    {id:4, name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
-    {id:5, name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
-    {id:6, name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
-    {id:7, name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
-    {id:8, name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
-  ]
+  employeeData:userDetails[] = [];
 
-  managerData = [
-    {id:1, name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
-    {id:2, name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
-    {id:3, name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
-    {id:4, name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
-  ]
-
+  managerData:userDetails[]= [];
   employeeDisplayedColumns: string[] = ['id', 'name','email', 'businessTitle',"delete"];
   employeeDataSource:any;
 
@@ -62,7 +55,6 @@ export class AdminDashboardComponent implements OnInit {
   constructor(private adminService:AdminService) { }
 
   ngOnInit(): void {
-    
     if (!localStorage.getItem('foo')) { 
       localStorage.setItem('foo', 'no reload') 
       location.reload() 
@@ -72,7 +64,62 @@ export class AdminDashboardComponent implements OnInit {
 
     this.employeeDataSource = new MatTableDataSource<any>();
     this.managerDataSource = new MatTableDataSource<any>();
-    this.displayManagerData();
+
+    this.getManagerData();
+    this.getEmployeeData();
+    this.displayManager = true;
+  }
+
+  getManagerData(){
+    this.adminService.getManagerData().subscribe(
+      (response:any) => {
+        this.managerData = [];
+        response.forEach(
+          (element:any) => {
+            let managerDetails = {
+              id:element.id,
+              name:element.name,
+              email:element.email,
+              businessTitle:element.businessTitle
+            }
+            this.managerData.push(managerDetails);
+          }
+        )
+       
+        this.managerDataSource.data = this.managerData;
+        console.log(response);
+      },
+      (error:any) => {
+        console.log(error);
+      }
+    )
+  }
+
+  
+  getEmployeeData(){
+    this.adminService.getEmployeeData().subscribe(
+      (response:any) => {
+        console.log(response)
+        this.employeeData = [];
+        response.forEach(
+          (element:any) => {
+            let employeeDetails = {
+              id:element.id,
+              name:element.name,
+              email:element.email,
+              businessTitle:element.businessTitle
+            }
+            this.employeeData.push(employeeDetails);
+          }
+        )
+        // this.displayManager = true;
+        this.employeeDataSource.data = this.employeeData;
+        console.log(response);
+      },
+      (error:any) => {
+        console.log(error);
+      }
+    )
   }
 
   displayManagerData()
@@ -101,6 +148,7 @@ export class AdminDashboardComponent implements OnInit {
         phone:this.newManagerData.phone,
         businessTitle:this.newManagerData.businessTitle
       }
+    
       
     }
     else{
@@ -113,13 +161,18 @@ export class AdminDashboardComponent implements OnInit {
         phone:this.newEmployeeData.phone,
         businessTitle:this.newEmployeeData.businessTitle
       }
-      
     }
 
     console.log(userData);
     this.adminService.addUser(userData).subscribe(
       (response:any) => {
         console.log(response);
+        if(type==0){
+          this.getManagerData();
+        }
+        else{
+          this.getEmployeeData()
+        }
       },
       (error:any) => {
         console.log(error);
@@ -127,28 +180,22 @@ export class AdminDashboardComponent implements OnInit {
     )
   }
 
-  deleteManager(id:any)
+  deleteUser(id:any)
   {
-    this.managerData.forEach((element,index)=>{
-      if(element.id==id)
-      {
-        this.managerData.splice(index,1);
+    this.adminService.deleteUser(id).subscribe(
+      (response:any) => {
+        console.log(response);
+        this.getManagerData();
+        console.log("function cll")
+        this.getEmployeeData();
+      },
+      (error:any) => {
+        console.log(error);
       }
-    })
-    this.managerDataSource.data = this.managerData;
+    )
   }
 
   
-  deleteEmployee(id:any)
-  {
-    this.employeeData.forEach((element,index)=>{
-      if(element.id==id)
-      {
-        this.employeeData.splice(index,1);
-      }
-    })
-    this.employeeDataSource.data = this.employeeData;
-  }
 
 
 }
