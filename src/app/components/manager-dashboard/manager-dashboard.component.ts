@@ -6,6 +6,34 @@ import {FormControl} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ChartComponent } from 'ng-apexcharts';
 import { ApexNonAxisChartSeries, ApexResponsive, ApexChart } from "ng-apexcharts";
+import { ManagerService } from 'src/app/services/manager.service';
+import { elementAt } from 'rxjs';
+
+
+export interface userDetails {
+  id:number,
+  name:string,
+  email:string,
+  businessTitle:string
+}
+
+export interface projectDetailsInterface {
+  name:string,
+  description:string
+}
+
+export interface taskDetailsInterface {
+  id:number,
+  name:string,
+  desc:string,
+  status:number,
+  emp:userDetails,
+}
+
+export interface effortTable {
+  id:number,
+  effortSeries:number[],
+}
 
 
 export type ChartOptions = {
@@ -26,7 +54,7 @@ export class ManagerDashboardComponent implements OnInit {
   projects:any;
   selected:any;
 
-  projectDetails = {
+  projectDetails:projectDetailsInterface = {
     name:'',
     description:'',
   }
@@ -34,11 +62,10 @@ export class ManagerDashboardComponent implements OnInit {
   taskDetails = {
     name:'',
     desc:'',
-    emp:{id:0,name:'',email:'',businessTitle:''}
+    emp:0,
   }
 
   effortDetails = {
-    date:'',
     rah:0,
     dh:0,
     ch:0,
@@ -58,27 +85,10 @@ export class ManagerDashboardComponent implements OnInit {
   task:any;
   effort:any;
 
-  projectEmployeeData = [
-    {id:1, name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
-    {id:2, name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
-    {id:3, name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
-    {id:3, name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
-  ]
-
-  employeeData = [
-    {id:1, name:'name1',email:'email1@gmail.com', businessTitle:"title1" },
-    {id:2, name:'name2',email:'email1@gmail.com', businessTitle:"title2" },
-    {id:3, name:'name3',email:'email1@gmail.com', businessTitle:"title3" },
-    {id:4, name:'name4',email:'email1@gmail.com', businessTitle:"title4" },
-  ]
-
-  taskData = [
-    {id:'1', name:'task1',desc:'desc1',status:0,emp:{id:1, name:'name1',email:'email1@gmail.com', businessTitle:"title1" }},
-    {id:'2', name:'task2',desc:'desc2',status:1,emp:{id:2, name:'name2',email:'email1@gmail.com', businessTitle:"title2" }},
-    {id:'3', name:'task3',desc:'desc3',status:2,emp:{id:3, name:'name3',email:'email1@gmail.com', businessTitle:"title3" } },
-    {id:'4', name:'task4',desc:'desc4',status:1,emp:{id:4, name:'name4',email:'email1@gmail.com', businessTitle:"title4" } },
-  ]
-
+  projectEmployeeData:userDetails[][] = [];
+  employeeData:userDetails[][] = [];
+  taskData:taskDetailsInterface[][] = [];
+  effortData:effortTable[] = [];
   // effortData = [
   //   {date:''}
   // ]
@@ -98,7 +108,7 @@ export class ManagerDashboardComponent implements OnInit {
   public chartOptions:any;
   // Partial<ChartOptions>;
 
-  constructor(private loginService:LoginService,private route:Router,private auth:AuthguardService) { 
+  constructor(private managerService:ManagerService, private loginService:LoginService,private route:Router,private auth:AuthguardService) { 
     
   }
 
@@ -125,8 +135,13 @@ export class ManagerDashboardComponent implements OnInit {
           }
         }
       ]
+      
     };
     
+
+
+
+
     this.teamDataSource = new MatTableDataSource<any>();
     this.teamDataSource.data = this.projectEmployeeData;
 
@@ -157,12 +172,95 @@ export class ManagerDashboardComponent implements OnInit {
     this.addProjectDisplay();
     this.projects = [];
 
+    this.getProjectDetails();
     
-    let newProject = this.projectDetails;
-    newProject.name="sfvfds";
-    newProject.description="dadcsdv";
-    this.projects.push(newProject);
+   
+  }
 
+  getProjectDetails()
+  {
+    this.managerService.getProjectDetails().subscribe(
+      (response:any) => {
+        console.log(response);
+        response.forEach((element:any)=>{  
+          this.managerService.getFreeEmployeeForProject(element.id).subscribe(
+            (response:any) => {
+              // console.log(response);
+              let freeEmployeeData:userDetails[] = [];
+              response.forEach((freeEmployee:any) => {
+                let userDetailsData = {
+                  id:freeEmployee.id,
+                  name:freeEmployee.name,
+                  email:freeEmployee.email,
+                  businessTitle:freeEmployee.businessTitle
+                }
+                freeEmployeeData.push(userDetailsData);
+              })
+              this.employeeData.push(freeEmployeeData);
+            },
+            (error:any) => {
+              console.log(error);
+            }
+          );
+          let pd = {
+            id:element.id,
+            name:element.projectname,
+            description:element.description
+          }
+          this.projects.push(pd)
+          console.log(this.projectEmployeeData);
+          let projectEmployeeDetails:userDetails[] = [];
+          element.users.forEach((employee:any) => {
+            let userDetailsData = {
+              id:employee.id,
+              name:employee.name,
+              email:employee.email,
+              businessTitle:employee.businessTitle
+            }
+            projectEmployeeDetails.push(userDetailsData);
+          })
+          this.projectEmployeeData.push(projectEmployeeDetails);
+
+
+          let projectTaskDetails:taskDetailsInterface[] = [];
+          element.task.forEach((task:any) => {
+            let userDetailsData = {
+              id:task.user.id,
+              name:task.user.name,
+              email:task.user.email,
+              businessTitle:task.user.businessTitle
+            }
+            let taskDetailsData = {
+              id:task.id,
+              name:task.taskname,
+              desc:task.description,
+              status:task.statusLu.id,
+              emp:userDetailsData,
+            }
+            projectTaskDetails.push(taskDetailsData);
+          })
+          this.taskData.push(projectTaskDetails);
+          console.log(this.taskData);
+
+          let  effort:number[] = [];
+          effort.push(element.effortTable.requirementAnalysisHours)
+          effort.push(element.effortTable.designingHours)
+          effort.push(element.effortTable.codingHours)
+          effort.push(element.effortTable.testingHours)
+          effort.push(element.effortTable.projectManagementHours)
+          let effortDataDetails:effortTable = {
+            id:element.effortTable.id,
+            effortSeries:effort,
+          }
+          this.effortData.push(effortDataDetails);
+
+        });
+        
+      },
+      (error:any)=> {
+        console.log(error);
+      }
+    );
   }
 
   addProjectDisplay(){
@@ -190,6 +288,12 @@ export class ManagerDashboardComponent implements OnInit {
     let newDiv: HTMLElement = document.getElementById(this.selected) as HTMLElement;
     newDiv.style.background =  "#ebe5f0";
     newDiv.style.color = "black"; 
+
+
+    this.teamDataSource.data  = this.projectEmployeeData[this.projectDisplayIdx];
+    this.taskDataSource.data  = this.taskData[this.projectDisplayIdx];
+    this.chartOptions.series  = this.effortData[this.projectDisplayIdx].effortSeries;
+
     this.editDetailsDisabled = true;
     this.editTeamDetailsDisabled = true;
     this.editTaskDetailsDisabled = true;
@@ -219,10 +323,20 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   addProjectDetails(){
-    let newProject = this.projectDetails;
-    this.projects.push(newProject);
-    console.log(this.projects);
-    // this.reset()
+    this.managerService.addProject(this.projectDetails).subscribe(
+      (response:any)=>{
+        console.log(response);
+        this.projectEmployeeData = [];
+        this.employeeData = [];
+        this.taskData = [];
+        this.effortData = [];
+        this.projects = [];
+        this.getProjectDetails();
+      },
+      (error:any) => {
+        console.log(error);
+      }
+    )
   }
 
   editDescription(projectDisplayIdx:any){
@@ -231,6 +345,34 @@ export class ManagerDashboardComponent implements OnInit {
 
   saveDescription(projectDisplayIdx:any){
     this.editDetailsDisabled = true;
+    this.managerService.updateProject(this.projects[projectDisplayIdx]).subscribe(
+      (response:any) => {
+        
+      },
+      (error:any) => {
+
+      }
+    );
+  }
+
+  removeProject()
+  {
+    this.managerService.removeProject(this.projects[this.projectDisplayIdx].id).subscribe(
+      (response:any) => {
+        console.log(response);
+        this.projects.splice(this.projectDisplayIdx,1);
+        this.projectEmployeeData.splice(this.projectDisplayIdx,1);
+        this.employeeData.splice(this.projectDisplayIdx,1);
+        this.taskData.splice(this.projectDisplayIdx,1);
+        this.effortData.splice(this.projectDisplayIdx,1);
+        this.addProjectDisplay();
+
+      },
+      (error:any) => {
+        console.log(error);
+      }
+    );
+    
   }
 
   editTeam(projectDisplayIdx:any){
@@ -259,77 +401,210 @@ export class ManagerDashboardComponent implements OnInit {
 
   addEmployee()
   {
-    this.employeeData.forEach((elemnet,index)=>{
-      if(this.addMember.value.includes(elemnet.id))
-      {
-        this.projectEmployeeData.push(elemnet);
-        this.employeeData.splice(index,1);
+
+    let userIds:any = [];
+    this.addMember.value.forEach((element:any) =>{
+      userIds.push(element);
+    })
+    console.log(this.projectEmployeeData);
+    this.managerService.addUserToProject(this.projects[this.projectDisplayIdx].id,userIds).subscribe(
+      (response:any) =>{
+        console.log(response);
+        this.managerService.getFreeEmployeeForProject(response.id).subscribe(
+          (response:any) => {
+            // console.log(response);
+            let freeEmployeeData:userDetails[] = [];
+            response.forEach((freeEmployee:any) => {
+              let userDetailsData = {
+                id:freeEmployee.id,
+                name:freeEmployee.name,
+                email:freeEmployee.email,
+                businessTitle:freeEmployee.businessTitle
+              }
+              freeEmployeeData.push(userDetailsData);
+            })
+            this.employeeData[this.projectDisplayIdx]=freeEmployeeData;
+          },
+          (error:any) => {
+            console.log(error);
+          }
+        );
+        let projectEmployeeDetails:userDetails[] = [];
+        response.users.forEach((employee:any) => {
+          let userDetailsData = {
+            id:employee.id,
+            name:employee.name,
+            email:employee.email,
+            businessTitle:employee.businessTitle
+          }
+          projectEmployeeDetails.push(userDetailsData);
+        })
+        this.projectEmployeeData[this.projectDisplayIdx]=projectEmployeeDetails;
+        this.teamDataSource.data = projectEmployeeDetails;
+        console.log(this.projectEmployeeData);
+      },
+      (error:any)=>{
+        console.log(error);
       }
-    });
-    this.addMember.setValue(null);
-    this.teamDataSource.data = this.projectEmployeeData;
-    console.log(this.teamDataSource)
+    )
+     this.addMember.setValue(null);
+    // this.teamDataSource.data = this.projectEmployeeData;
+    // console.log(this.teamDataSource)
+  }
+
+  removeEmployee(id:any)
+  {
+    console.log(this.projectEmployeeData);
+    this.managerService.removeUserFromProject(this.projects[this.projectDisplayIdx].id,id).subscribe(
+      (response:any)=>{
+        console.log(response);
+        this.managerService.getFreeEmployeeForProject(response.id).subscribe(
+          (response:any) => {
+            // console.log(response);
+            let freeEmployeeData:userDetails[] = [];
+            response.forEach((freeEmployee:any) => {
+              let userDetailsData = {
+                id:freeEmployee.id,
+                name:freeEmployee.name,
+                email:freeEmployee.email,
+                businessTitle:freeEmployee.businessTitle
+              }
+              freeEmployeeData.push(userDetailsData);
+            })
+            this.employeeData[this.projectDisplayIdx]=freeEmployeeData;
+          },
+          (error:any) => {
+            console.log(error);
+          }
+        );
+        let projectEmployeeDetails:userDetails[] = [];
+        response.users.forEach((employee:any) => {
+          let userDetailsData = {
+            id:employee.id,
+            name:employee.name,
+            email:employee.email,
+            businessTitle:employee.businessTitle
+          }
+          projectEmployeeDetails.push(userDetailsData);
+        })
+        this.projectEmployeeData[this.projectDisplayIdx]=projectEmployeeDetails;
+        this.teamDataSource.data = projectEmployeeDetails;
+        console.log(this.projectEmployeeData);
+      },
+      (error:any)=>{
+
+      }
+    )
   }
 
   addTask()
   {
-    console.log("add task");
-    console.log(this.assignEmployee);
-    console.log("after taask")
     if(this.taskDetails.name=='' || this.taskDetails.desc=='' || this.assignEmployee.value.id == '')
     {
       alert("plz enter details");
       return;
     }
-    
     let task = {
-      id:'10',
       name:this.taskDetails.name,
       desc:this.taskDetails.desc,
-      status:0,
       emp:this.taskDetails.emp
     }
-    this.taskData.push(task);
-    this.taskDataSource.data = this.taskData;
+    this.managerService.addTaskToProject(this.projects[this.projectDisplayIdx].id,task).subscribe(
+      (response:any) => {
+        console.log(response);
+        let projectTaskDetails:taskDetailsInterface[] = [];
+        response.task.forEach((task:any) => {
+          let userDetailsData = {
+            id:task.user.id,
+            name:task.user.name,
+            email:task.user.email,
+            businessTitle:task.user.businessTitle
+          }
+          let taskDetailsData = {
+            id:task.id,
+            name:task.taskname,
+            desc:task.description,
+            status:task.statusLu.id,
+            emp:userDetailsData,
+          }
+          projectTaskDetails.push(taskDetailsData);
+        })
+        this.taskData[this.projectDisplayIdx]=projectTaskDetails;
+        this.taskDataSource.data = projectTaskDetails;
+        console.log(this.taskData);
+
+      },
+      (error:any) => {
+        console.log(error);
+      }
+    );
     this.taskDetails.desc='';
     this.taskDetails.name='';
     this.assignEmployee.setValue(null);
     console.log(this.taskDataSource);
   }
 
-  updateEffort(){
-    this.chartOptions.series = [this.effortDetails.rah, this.effortDetails.dh, this.effortDetails.ch, this.effortDetails.th,this.effortDetails.pmh];
-
-  }
-
-
   removeTask(id:any)
   {
-    
-    console.log("remove task");
-    this.taskData.forEach((element,index)=>{
-      if(element.id==id)
-      {
-        this.taskData.splice(index,1);
+    this.managerService.removeTaskFromProject(this.projects[this.projectDisplayIdx].id,id).subscribe(
+      (response:any) => {
+        console.log(response);
+        let projectTaskDetails:taskDetailsInterface[] = [];
+        response.task.forEach((task:any) => {
+          let userDetailsData = {
+            id:task.user.id,
+            name:task.user.name,
+            email:task.user.email,
+            businessTitle:task.user.businessTitle
+          }
+          let taskDetailsData = {
+            id:task.id,
+            name:task.taskname,
+            desc:task.description,
+            status:task.statusLu.id,
+            emp:userDetailsData,
+          }
+          projectTaskDetails.push(taskDetailsData);
+        })
+        this.taskData[this.projectDisplayIdx]=projectTaskDetails;
+        this.taskDataSource.data = projectTaskDetails;
+        console.log(this.taskData);
+      },
+      (error:any) => {
+        console.log(error);
       }
-    });
-    
-    this.taskDataSource.data = this.taskData;
-    
-    console.log(this.taskDataSource);
+
+    );
   }
 
-  removeEmployee(id:any)
-  {
-    this.projectEmployeeData.forEach((element,index)=>{
-      if(element.id == id)
-      {
-        this.employeeData.push(element);
-        this.projectEmployeeData.splice(index,1);
+  updateEffort(){
+    this.managerService.updateEffortTable(this.projects[this.projectDisplayIdx].id,this.effortData[this.projectDisplayIdx]).subscribe(
+      (response:any) => {
+        console.log(response);
+        let  effort:number[] = [];
+        effort.push(response.effortTable.requirementAnalysisHours)
+        effort.push(response.effortTable.designingHours)
+        effort.push(response.effortTable.codingHours)
+        effort.push(response.effortTable.testingHours)
+        effort.push(response.effortTable.projectManagementHours)
+        let effortDataDetails:effortTable = {
+          id:response.effortTable.id,
+          effortSeries:effort,
+        }
+        this.effortData[this.projectDisplayIdx] = effortDataDetails;
+        this.chartOptions.series = effortDataDetails.effortSeries;
+      },
+      (error:any) => {
+        console.log(error);
       }
-    });
-    this.teamDataSource.data=this.projectEmployeeData;
+
+    );
   }
+
+
+  
+
+ 
   reset(){
     this.projectDetails.name = '';
     this.projectDetails.description ='';

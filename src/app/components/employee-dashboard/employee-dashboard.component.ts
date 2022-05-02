@@ -1,9 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component,ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthguardService } from 'src/app/services/authguard.service';
 import { LoginService } from 'src/app/services/login.service';
 import {FormControl} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
+import { EmployeeService } from 'src/app/services/employee.service';
+import { ChartComponent } from 'ng-apexcharts';
+import { ApexNonAxisChartSeries, ApexResponsive, ApexChart } from "ng-apexcharts";;
+
+
+
+export type ChartOptions = {
+  series: ApexNonAxisChartSeries;
+  chart: ApexChart;
+  responsive: ApexResponsive[];
+  labels: any;
+};
 
 @Component({
   selector: 'app-employee-dashboard',
@@ -14,30 +26,25 @@ export class EmployeeDashboardComponent implements OnInit {
 
   projects:any;
   selected:any;
+  dashboard:any;
   
   projectDisplayIdx:any;
 
-  taskData = [[
-    {id:'1', name:'task1',desc:'desc1',status:0},
-    {id:'2', name:'task2',desc:'desc2',status:1},
-    {id:'3', name:'task3',desc:'desc3',status:2},
-    {id:'4', name:'task4',desc:'desc4',status:1},
-  ],
-  [
-    {id:'4', name:'task1',desc:'desc1',status:1},
-    {id:'3', name:'task2',desc:'desc2',status:2},
-    {id:'2', name:'task3',desc:'desc3',status:0},
-    {id:'1', name:'task4',desc:'desc4',status:1},
-  ]]
+  taskData:any[] = []
+  newStatus:any[] = [];
+  pendingTask:any;
+  workingTask:any;
+  completedTask:any;
 
-
-  
-  taskDisplayedColumns: string[] = ['id','name','desc','status'];
+  editTaskDetailsDisabled:any;
+   
+  taskDisplayedColumns: string[] = ['id','name','desc','status','update'];
   taskDataSource:any;
  
+  @ViewChild("chart") chart:ChartComponent;
+  public chartOptions:any;
 
-
-  constructor(private loginService:LoginService,private route:Router,private auth:AuthguardService) { }
+  constructor(private loginService:LoginService,private employeeService:EmployeeService,private route:Router,private auth:AuthguardService) { }
 
   ngOnInit(): void {
     if (!localStorage.getItem('foo')) { 
@@ -60,31 +67,99 @@ export class EmployeeDashboardComponent implements OnInit {
       )
     }
 
+    this.chartOptions = {
+      series: [0,0,0],
+      chart: {
+        width: 500,
+        type: "pie"
+      },
+      labels: ["Pending Task","Workin Task","Completed Task"],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: "bottom"
+            }
+          }
+        }
+      ]
+      
+    };
     
     this.taskDataSource = new MatTableDataSource<any>();
-    this.taskDataSource.data = this.taskData[0];
-
+    this.editTaskDetailsDisabled = true;
     this.projects = [];
-    let newProject = {
-    name:"sfvfds",
-    description:"dadcsdv",
-    }
-    this.projects.push(newProject);
-    let newProject1 = {
-      name:"sfvfds",
-      description:"dadcsdvdfbd",
-      }
-    this.projects.push(newProject1);
-
-    this.projectDisplayIdx=0;
-    this.selected = "pro"+this.projectDisplayIdx;
+    this.selected = "dashboard"
+    this.pendingTask = 0;
+    this.workingTask = 0;
+    this.completedTask = 0;
+    this.dashboardDisplay();
     
-    this.projectDisplay(0);
     console.log(this.projects)
   }
 
+  
+
+  getAllProjects()
+  {
+    this.projects = [];
+    this.pendingTask = 0;
+    this.workingTask = 0;
+    this.completedTask = 0;
+   
+    this.employeeService.getAllProjects().subscribe(
+      (response:any) => {
+        response.forEach((element:any) => {
+          let project = {
+            id:element.id,
+            name:element.projectname,
+            description:element.description,
+          }
+          this.projects.push(project);
+          element.task.forEach((task:any)=>{
+            if(task.statusLu.id==1)
+            {
+              this.pendingTask = this.pendingTask + 1;
+            }
+            else if(task.statusLu.id==2)
+            {
+              this.workingTask = this.workingTask + 1;
+            }
+            else
+            {
+              this.completedTask = this.completedTask + 1;
+            }
+          });
+        });
+        console.log(this.projects)
+        this.chartOptions.series = [this.pendingTask,this.workingTask,this.completedTask];
+      },
+      (error:any) => {
+        console.log(error);
+      }
+
+    );
+  }
+
+  dashboardDisplay()
+  {
+    this.dashboard = true;
+    let div: HTMLElement = document.getElementById(this.selected) as HTMLElement;
+    div.style.background =  "none";
+    div.style.color = "white";
+    this.selected = "dashboard";
+    let newDiv: HTMLElement = document.getElementById(this.selected) as HTMLElement;
+    newDiv.style.background =  "#ebe5f0";
+    newDiv.style.color = "black";
+
+    this.getAllProjects();
+  }
   projectDisplay(idx:any){ 
-    this.taskDataSource.data = this.taskData[idx];
+    this.dashboard = false;
     console.log("project selectd" + idx);
     console.log(this.selected);
     this.projectDisplayIdx = idx
@@ -96,6 +171,68 @@ export class EmployeeDashboardComponent implements OnInit {
     newDiv.style.background =  "#ebe5f0";
     newDiv.style.color = "black"; 
     
+    this.employeeService.getTaskByProject(this.projects[this.projectDisplayIdx].id).subscribe(
+      (response:any) => {
+        this.taskData = [];
+        this.newStatus = [];
+        response.forEach((element:any) =>{
+          let taskDetails = {
+            id:element.id,
+            name:element.taskname,
+            desc:element.description,
+            status:element.statusLu.id,
+          }
+          this.taskData.push(taskDetails);
+          this.newStatus.push(element.statusLu.id);
+        });
+        this.taskDataSource.data = this.taskData;
+      },
+      (error:any) => {
+        console.log(error);
+      }
+    );
+    
+
+  }
+  
+  editTask(projectDisplayIdx:any){
+    this.editTaskDetailsDisabled = false;
+  }
+ 
+  saveTask(projectDisplayIdx:any){
+    this.editTaskDetailsDisabled = true;
+  }
+
+  updateTaskStatus(taskId:any,idx:any)
+  {
+    this.employeeService.updateTaskStatus(this.projects[this.projectDisplayIdx].id,taskId,this.newStatus[idx]).subscribe(
+      (response:any) => {
+        this.employeeService.getTaskByProject(this.projects[this.projectDisplayIdx].id).subscribe(
+          (response:any) => {
+            this.taskData = [];
+            this.newStatus = [];
+            response.forEach((element:any) =>{
+              let taskDetails = {
+                id:element.id,
+                name:element.taskname,
+                desc:element.description,
+                status:element.statusLu.id,
+              }
+              this.taskData.push(taskDetails);
+              this.newStatus.push(element.statusLu.id);
+            });
+            this.taskDataSource.data = this.taskData;
+          },
+          (error:any) => {
+            console.log(error);
+          }
+        );
+      },
+      (error:any) => {
+        console.log(error);
+      }
+
+    );
   }
 
 }

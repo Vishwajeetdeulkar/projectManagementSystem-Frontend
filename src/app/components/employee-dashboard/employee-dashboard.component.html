@@ -1,5 +1,12 @@
 <mat-sidenav-container class="example-container">
     <mat-sidenav mode="side" class="py-3" opened>
+        <div class="addProject my-2" id="dashboard">
+            <button (click)="dashboardDisplay()"   mat-button>
+                <mat-icon>dashboard</mat-icon>
+                Dashboard
+            </button>
+        </div>
+        
         <div *ngFor="let project of projects,let idx=index" class="addProject my-3"  id="pro{{idx}}"> 
             <button (click)="projectDisplay(idx)"  mat-button>
                 <mat-icon>work</mat-icon>
@@ -10,16 +17,66 @@
     </mat-sidenav>
     <mat-sidenav-content>
         <div class="m-3">
-            <div class="m-auto">
+            <div *ngIf="dashboard" class="m-auto">
                 <div>
                     <div class="projectName">
-                        <span class="fs-4 pt-3 mx-3 fw-bold " >
+                        <span class="fs-3 pt-3 mx-3 fw-bold " >
+                            <!-- {{projectDisplayIdx}} -->
+                            Dashboard
+                        </span>
+                    </div>
+                    <div class="my-3">
+                        <div class="row mx-3">
+                            <div class="col-6">
+                                <div class="fs-4 my-3"> 
+                                    <p class="fw-bold" style="display: inline;">Total Project Running: </p>
+                                    <p style="display: inline;"> &nbsp;&nbsp;{{projects.length}} </p>
+                                </div> 
+                                <div class="fs-4 my-3"> 
+                                    <p class="fw-bold" style="display: inline;">Total Task: </p>
+                                    <p style="display: inline;"> &nbsp;&nbsp;{{pendingTask + workingTask + completedTask}} </p>
+                                </div>    
+                                <div class="fs-5 my-3 mx-3"> 
+                                    <p class="fw-bold" style="display: inline;">Pendding Task: </p>
+                                    <p style="display: inline;"> &nbsp;&nbsp;{{pendingTask}} </p>
+                                </div> 
+                                <div class="fs-5 my-3 mx-3"> 
+                                    <p class="fw-bold" style="display: inline;">working Task: </p>
+                                    <p style="display: inline;"> &nbsp;&nbsp;{{workingTask}} </p>
+                                </div> 
+                                <div class="fs-5 my-3 mx-3"> 
+                                    <p class="fw-bold" style="display: inline;">completed Task: </p>
+                                    <p style="display: inline;"> &nbsp;&nbsp;{{completedTask}} </p>
+                                </div> 
+                            </div>
+
+                            <div class="col-6 text-center" id="chart">
+                                <span class="fs-6 pt-5 mx-3  fw-bold " >
+                                    Task Status Distribution
+                                    </span>
+                                <apx-chart 
+                                    [series]="chartOptions.series"
+                                    [chart]="chartOptions.chart"
+                                    [labels]="chartOptions.labels"
+                                    [responsive]="chartOptions.responsive"
+                                ></apx-chart>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!dashboard" class="m-auto">
+                <div>
+                    <div class="projectName">
+                        <span class="fs-4 pt-3  mx-3 fw-bold " >
                             <!-- {{projectDisplayIdx}} -->
                         {{projects[projectDisplayIdx].name}}
                         </span>
                     </div>
-                    <div  class="pt-3 ">
-                        <p> Project Description : {{projects[projectDisplayIdx].description}} </p>
+                    <div  class="py-3 mx-3">
+                        <p class="fw-bold" style="display: inline;">Project Description :</p>
+                        <p style="display: inline;"> &nbsp;&nbsp;{{projects[projectDisplayIdx].description}} </p>
                     </div>
                 </div> 
                 <div  class="mt-1">
@@ -28,6 +85,8 @@
 
                         Task List
                         </span>
+                        <mat-icon class="fs-5" *ngIf="editTaskDetailsDisabled"  (click)="editTask(projectDisplayIdx)">edit</mat-icon>
+                        <mat-icon class="fs-5" *ngIf="!editTaskDetailsDisabled"  (click)="saveTask(projectDisplayIdx)">disabled_by_default</mat-icon>
                     </div>
                     <div class="pt-3 ">
                         <table mat-table [dataSource]="taskDataSource" class="mat-elevation-z8">
@@ -57,19 +116,33 @@
                             <ng-container matColumnDef="status">
                                 <th mat-header-cell *matHeaderCellDef class="text-center"> Status </th>
                                 <td mat-cell *matCellDef="let element" class="text-center"> 
-                                        <button mat-button *ngIf="element.status==0" class="pending" > 
-                                            pendding
+                                        <button mat-button *ngIf="element.status==1" class="pending" > 
+                                            Pendding
                                         </button>
-                                        <button mat-button *ngIf="element.status==1" class="working" >
-                                            working
+                                        <button mat-button *ngIf="element.status==2" class="working" >
+                                            Working
                                         </button>
-                                        <button mat-button *ngIf="element.status==2" class="completed">
-                                            completed
+                                        <button mat-button *ngIf="element.status==3" class="completed">
+                                            Completed
                                         </button>
                                     
                                 </td>
                             </ng-container>
                           
+                            <ng-container matColumnDef="update">
+                                <th mat-header-cell *matHeaderCellDef class="text-center"> Update </th>
+                                <td mat-cell *matCellDef="let element,let idx = index" class="text-center" > 
+                                    <mat-select  [disabled]="editTaskDetailsDisabled"   style="width: 20%;" [(ngModel)]="newStatus[idx]" >
+                                        <mat-option  [value]="1"> Pending </mat-option>
+                                        <mat-option  [value]="2"> Working </mat-option>
+                                        <mat-option  [value]="3"> Completed </mat-option>
+                                    </mat-select>
+                                    <button  [disabled]="editTaskDetailsDisabled" class="mx-2" type="button" (click)="updateTaskStatus(element.id,idx)"   style="align-content: center;" mat-raised-button color="warm" >
+                                        Update
+                                    </button>
+                                    
+                                </td>
+                              </ng-container>
                             <!-- Weight Column -->
                           
                             <tr mat-header-row *matHeaderRowDef="taskDisplayedColumns"></tr>
