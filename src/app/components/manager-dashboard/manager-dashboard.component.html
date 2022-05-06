@@ -18,7 +18,7 @@
     <mat-sidenav-content>
         <div *ngIf="addProject" class="m-3">
             <div class="m-auto ">
-                <div >
+                <div class="projectName pb-2">
                     <span class="fs-4 pt-5 mx-3 fw-bold" >
                       Add new Project
                     </span>
@@ -70,6 +70,7 @@
                             <mat-icon>delete</mat-icon>
                             Delete Project
                         </button>
+                        
                     </div>
                     <div  class="pt-3 ">
                         <mat-form-field style="width: 80%;" appearance="outline">
@@ -80,7 +81,7 @@
                     </div>
                 </div> 
                 <div *ngIf="!teamMember" class="mt-1">
-                    <div class="projectName">
+                    <div class="projectName pb-2">
                         <span class="fs-4 pt-5 mx-3 fw-bold " >
                             <!-- {{projectDisplayIdx}} -->
                         Team Mamber List
@@ -150,7 +151,7 @@
                     </div>
                 </div>
                 <div *ngIf="!task" class="mt-1">
-                    <div class="projectName ">
+                    <div class="projectName pb-2">
                         <span class="fs-4 pt-5 mx-3 fw-bold " >
                         Task List
                         </span>
@@ -240,7 +241,7 @@
                     </div>
                 </div>
                 <div *ngIf="!effort" class="mt-1">
-                    <div class="projectName">
+                    <div class="projectName pb-2">
                         <span class="fs-4 pt-5 mx-3 fw-bold " >
                         Effort Management
                         </span>

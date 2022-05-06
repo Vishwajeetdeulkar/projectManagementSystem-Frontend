@@ -120,23 +120,30 @@ export class EmployeeDashboardComponent implements OnInit {
             description:element.description,
           }
           this.projects.push(project);
-          element.task.forEach((task:any)=>{
-            if(task.statusLu.id==1)
-            {
-              this.pendingTask = this.pendingTask + 1;
+          this.employeeService.getTaskByProject(project.id).subscribe(
+            (response:any)=>{
+              response.forEach((task:any) =>{
+                console.log(task.statusLu.id);
+                if(task.statusLu.id==1)
+                {
+                  this.pendingTask = this.pendingTask + 1;
+                }
+                else if(task.statusLu.id==2)
+                {
+                  this.workingTask = this.workingTask + 1;
+                }
+                else
+                {
+                  this.completedTask = this.completedTask + 1;
+                }    
+              }); 
+              this.chartOptions.series = [this.pendingTask,this.workingTask,this.completedTask];
             }
-            else if(task.statusLu.id==2)
-            {
-              this.workingTask = this.workingTask + 1;
-            }
-            else
-            {
-              this.completedTask = this.completedTask + 1;
-            }
-          });
+          );
+         
         });
         console.log(this.projects)
-        this.chartOptions.series = [this.pendingTask,this.workingTask,this.completedTask];
+        
       },
       (error:any) => {
         console.log(error);

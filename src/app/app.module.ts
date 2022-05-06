@@ -27,6 +27,9 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import {MatChipsModule} from '@angular/material/chips';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { AdminLoginComponent } from './components/admin-login/admin-login.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 @NgModule({
   declarations: [
@@ -56,7 +59,9 @@ import { AdminLoginComponent } from './components/admin-login/admin-login.compon
     MatTableModule,
     MatSelectModule,
     NgApexchartsModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSnackBarModule,
+    MatDialogModule
   ],
   providers: [AuthguardService],
   bootstrap: [AppComponent]

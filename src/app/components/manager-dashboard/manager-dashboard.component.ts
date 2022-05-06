@@ -7,7 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ChartComponent } from 'ng-apexcharts';
 import { ApexNonAxisChartSeries, ApexResponsive, ApexChart } from "ng-apexcharts";
 import { ManagerService } from 'src/app/services/manager.service';
-import { elementAt } from 'rxjs';
+import { MatSnackBar,  MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
+
 
 
 export interface userDetails {
@@ -50,6 +51,9 @@ export type ChartOptions = {
   styleUrls: ['./manager-dashboard.component.css']
 })
 export class ManagerDashboardComponent implements OnInit {
+
+  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
+  verticalPosition: MatSnackBarVerticalPosition = 'top';
 
   projects:any;
   selected:any;
@@ -108,7 +112,7 @@ export class ManagerDashboardComponent implements OnInit {
   public chartOptions:any;
   // Partial<ChartOptions>;
 
-  constructor(private managerService:ManagerService, private loginService:LoginService,private route:Router,private auth:AuthguardService) { 
+  constructor(private managerService:ManagerService, private loginService:LoginService,private route:Router,private auth:AuthguardService,private _snackBar: MatSnackBar) { 
     
   }
 
@@ -211,14 +215,17 @@ export class ManagerDashboardComponent implements OnInit {
           console.log(this.projectEmployeeData);
           let projectEmployeeDetails:userDetails[] = [];
           element.users.forEach((employee:any) => {
-            let userDetailsData = {
-              id:employee.id,
-              name:employee.name,
-              email:employee.email,
-              businessTitle:employee.businessTitle
+            if(employee.roles[0].id==3){
+              let userDetailsData = {
+                id:employee.id,
+                name:employee.name,
+                email:employee.email,
+                businessTitle:employee.businessTitle
+              }
+              projectEmployeeDetails.push(userDetailsData);
             }
-            projectEmployeeDetails.push(userDetailsData);
-          })
+          });
+          console.log(projectEmployeeDetails);
           this.projectEmployeeData.push(projectEmployeeDetails);
 
 
@@ -332,6 +339,11 @@ export class ManagerDashboardComponent implements OnInit {
         this.effortData = [];
         this.projects = [];
         this.getProjectDetails();
+        this._snackBar.open('New Project Created Successfully', 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       },
       (error:any) => {
         console.log(error);
@@ -357,7 +369,8 @@ export class ManagerDashboardComponent implements OnInit {
 
   removeProject()
   {
-    this.managerService.removeProject(this.projects[this.projectDisplayIdx].id).subscribe(
+    
+      this.managerService.removeProject(this.projects[this.projectDisplayIdx].id).subscribe(
       (response:any) => {
         console.log(response);
         this.projects.splice(this.projectDisplayIdx,1);
@@ -371,8 +384,7 @@ export class ManagerDashboardComponent implements OnInit {
       (error:any) => {
         console.log(error);
       }
-    );
-    
+    );  
   }
 
   editTeam(projectDisplayIdx:any){
