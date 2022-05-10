@@ -15,7 +15,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains multiple jobs
-  build_deploy:
+  build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     strategy:
@@ -42,23 +42,9 @@ jobs:
       - name: build
         run: |
           npm run build --configuration=production
-
-
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v1.1
-        with:
-          publish-dir: './dist/project-management-system'
-          production-branch: master
-          github-token: ${{ secrets.GIT_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions"
-          enable-pull-request-comment: false
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 1
-
+          
+      - name: test
+        run: ng test --watch=false --browsers=ChromeHeadless
 
       - name: checkout repo
         uses: actions/checkout@v2
@@ -82,19 +68,15 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: vishwajeet1321/project-management-system-frontend:latest
-
-    #Lighthouse
-  lighthouse:
-    needs: build_deploy
+    
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
-      - name: Audit URLs using Lighthouse
-        uses: treosh/lighthouse-ci-action@v7
-        with:
-          urls: |
-            https://627592d5edcf6507ef0c27e1--visionary-dasik-472f6e.netlify.app/
-            https://Vishwajeetdeulkar.github.io/
-          budgetPath: ./budget.json # test performance budgets
-          uploadArtifacts: true # save results as an action artifacts
-          temporaryPublicStorage: true # upload lighthouse report to the temporary storage
+      - uses: ./.github/actions/ansible
+    env:
+      SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+
