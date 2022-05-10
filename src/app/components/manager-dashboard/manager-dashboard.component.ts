@@ -445,7 +445,7 @@ export class ManagerDashboardComponent implements OnInit {
         );
         let projectEmployeeDetails:userDetails[] = [];
         response.users.forEach((employee:any) => {
-          if(employee.roles[0]==3){
+          if(employee.roles[0].id==3){
           let userDetailsData = {
             id:employee.id,
             name:employee.name,
@@ -455,6 +455,7 @@ export class ManagerDashboardComponent implements OnInit {
           projectEmployeeDetails.push(userDetailsData);
         }
         })
+        console.log(projectEmployeeDetails);
         this.projectEmployeeData[this.projectDisplayIdx]=projectEmployeeDetails;
         this.teamDataSource.data = projectEmployeeDetails;
         console.log(this.projectEmployeeData);
@@ -504,7 +505,7 @@ export class ManagerDashboardComponent implements OnInit {
         );
         let projectEmployeeDetails:userDetails[] = [];
         response.users.forEach((employee:any) => {
-          if(employee.roles[0]==3){
+          if(employee.roles[0].id==3){
           let userDetailsData = {
             id:employee.id,
             name:employee.name,

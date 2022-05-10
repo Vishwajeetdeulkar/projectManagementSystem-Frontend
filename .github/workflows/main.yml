@@ -44,7 +44,10 @@ jobs:
           npm run build --configuration=production
           
       - name: test
-        run: ng test --watch=false --browsers=ChromeHeadless
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm-dev
+          npm test --watch=false --browsers=ChromeHeadlessCI
 
       - name: checkout repo
         uses: actions/checkout@v2
