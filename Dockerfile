@@ -11,10 +11,10 @@ COPY ./ /usr/local/app/
 
 RUN npm config set legacy-peer-deps true
 # Install all the dependencies
-RUN npm install
+RUN npm install --configuration=production
 
 # Generate the build of the application
-RUN npm run build
+RUN npm run build --configuration=production
 
 
 # Stage 2: Serve app with nginx server

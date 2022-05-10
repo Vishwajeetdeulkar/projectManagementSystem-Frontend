@@ -1,14 +1,15 @@
 import { HttpClient,HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-
+import{ AppComponent} from "../app.component";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  url = "http://localhost:8086";
+  url = environment.apiURL;
 
   constructor(private router:Router,private http:HttpClient) { }
 
@@ -35,7 +36,7 @@ export class AdminService {
   }
 
   getManagerData(){
-    
+
     let token = localStorage.getItem("SessionUser");
     let header = new HttpHeaders(
       {
@@ -46,7 +47,7 @@ export class AdminService {
   }
 
   getEmployeeData(){
-    
+
     let token = localStorage.getItem("SessionUser");
     let header = new HttpHeaders(
       {

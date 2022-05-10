@@ -1,7 +1,7 @@
 import { HttpClient,HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-
+import {environment} from "../../environments/environment";
 @Injectable({
   providedIn: 'root'
 })
@@ -9,7 +9,7 @@ export class LoginService {
 
 
 
-  url = "http://localhost:8086";
+  url = environment.apiURL;
 
   constructor(private router:Router,private http:HttpClient) { }
 
