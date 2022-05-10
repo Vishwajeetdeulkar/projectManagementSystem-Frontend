@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiURL: 'http://activecollab.westus2.cloudapp.azure.com:8086'
+  apiURL: 'http://activecollab.ddns.net:8086'
 };
