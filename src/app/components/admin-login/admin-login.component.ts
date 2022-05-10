@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthguardService } from 'src/app/services/authguard.service';
 import { LoginService } from 'src/app/services/login.service';
+import { MatSnackBar,  MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 
 
 @Component({
@@ -10,6 +11,9 @@ import { LoginService } from 'src/app/services/login.service';
   styleUrls: ['./admin-login.component.css']
 })
 export class AdminLoginComponent implements OnInit {
+
+  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
+  verticalPosition: MatSnackBarVerticalPosition = 'top';
 
 
   credentials={
@@ -20,7 +24,7 @@ export class AdminLoginComponent implements OnInit {
   isError = false;
   errorMsg = '';
 
-  constructor(private loginService:LoginService,private route:Router,private auth:AuthguardService) { }
+  constructor(private loginService:LoginService,private route:Router,private auth:AuthguardService,private _snackBar:MatSnackBar) { }
 
   ngOnInit(): void {
     if(this.auth.getToken())
@@ -48,13 +52,22 @@ export class AdminLoginComponent implements OnInit {
               window.location.href= "/adminDashboard";    
             },
             (error:any) => {
-              console.log(error);
+              this._snackBar.open(error, 'Close', {
+                horizontalPosition: this.horizontalPosition,
+                verticalPosition: this.verticalPosition,
+                duration: 2* 1000,
+              });
             }
           )
 
         },
         (error:any) => {
-          console.log(error);
+          this._snackBar.open(error["error"], 'Close', {
+            horizontalPosition: this.horizontalPosition,
+            verticalPosition: this.verticalPosition,
+            duration: 2* 1000,
+          });
+          this.isError = true
         }
     );
 

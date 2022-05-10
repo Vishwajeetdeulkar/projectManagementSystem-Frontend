@@ -4,6 +4,7 @@ import {FormControl} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { elementAt } from 'rxjs';
 import { AdminService } from 'src/app/services/admin.service';
+import { MatSnackBar,  MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 
 export interface userDetails {
   id:number,
@@ -18,6 +19,9 @@ export interface userDetails {
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
+
+  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
+  verticalPosition: MatSnackBarVerticalPosition = 'top';
 
 
   newEmployeeData = {
@@ -52,7 +56,7 @@ export class AdminDashboardComponent implements OnInit {
 
   displayManager:any;
 
-  constructor(private adminService:AdminService) { }
+  constructor(private adminService:AdminService,private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
   
@@ -84,7 +88,11 @@ export class AdminDashboardComponent implements OnInit {
         console.log(response);
       },
       (error:any) => {
-        console.log(error);
+        this._snackBar.open(error, 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       }
     )
   }
@@ -111,7 +119,11 @@ export class AdminDashboardComponent implements OnInit {
         console.log(response);
       },
       (error:any) => {
-        console.log(error);
+        this._snackBar.open(error, 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       }
     )
   }
@@ -163,13 +175,28 @@ export class AdminDashboardComponent implements OnInit {
         console.log(response);
         if(type==0){
           this.getManagerData();
+          this._snackBar.open('Manager created Successfully', 'Close', {
+            horizontalPosition: this.horizontalPosition,
+            verticalPosition: this.verticalPosition,
+            duration: 2* 1000,
+          });
         }
         else{
           this.getEmployeeData()
+          this._snackBar.open('Employee created Successfully', 'Close', {
+            horizontalPosition: this.horizontalPosition,
+            verticalPosition: this.verticalPosition,
+            duration: 2* 1000,
+          });
         }
+
       },
-      (error:any) => {
-        console.log(error);
+      (error:any) => { 
+        this._snackBar.open(error, 'Close', {
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition,
+        duration: 2* 1000,
+      });
       }
     )
   }
@@ -182,9 +209,18 @@ export class AdminDashboardComponent implements OnInit {
         this.getManagerData();
         console.log("function cll")
         this.getEmployeeData();
+        this._snackBar.open('User Deleted Successfully', 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       },
       (error:any) => {
-        console.log(error);
+        this._snackBar.open(error, 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       }
     )
   }

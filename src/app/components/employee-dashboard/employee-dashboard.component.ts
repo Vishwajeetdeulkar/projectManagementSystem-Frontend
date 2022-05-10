@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { EmployeeService } from 'src/app/services/employee.service';
 import { ChartComponent } from 'ng-apexcharts';
 import { ApexNonAxisChartSeries, ApexResponsive, ApexChart } from "ng-apexcharts";;
+import { MatSnackBar,  MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition} from '@angular/material/snack-bar';
 
 
 
@@ -23,6 +24,9 @@ export type ChartOptions = {
   styleUrls: ['./employee-dashboard.component.css']
 })
 export class EmployeeDashboardComponent implements OnInit {
+
+  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
+  verticalPosition: MatSnackBarVerticalPosition = 'top';
 
   projects:any;
   selected:any;
@@ -44,7 +48,7 @@ export class EmployeeDashboardComponent implements OnInit {
   @ViewChild("chart") chart:ChartComponent;
   public chartOptions:any;
 
-  constructor(private loginService:LoginService,private employeeService:EmployeeService,private route:Router,private auth:AuthguardService) { }
+  constructor(private _snackBar:MatSnackBar, private loginService:LoginService,private employeeService:EmployeeService,private route:Router,private auth:AuthguardService) { }
 
   ngOnInit(): void {
     if(this.auth.getToken())
@@ -223,9 +227,19 @@ export class EmployeeDashboardComponent implements OnInit {
               this.newStatus.push(element.statusLu.id);
             });
             this.taskDataSource.data = this.taskData;
+            this._snackBar.open("Task Status updated", 'Close', {
+              horizontalPosition: this.horizontalPosition,
+              verticalPosition: this.verticalPosition,
+              duration: 2* 1000,
+            });
           },
           (error:any) => {
             console.log(error);
+            this._snackBar.open(error, 'Close', {
+              horizontalPosition: this.horizontalPosition,
+              verticalPosition: this.verticalPosition,
+              duration: 2* 1000,
+            });
           }
         );
       },

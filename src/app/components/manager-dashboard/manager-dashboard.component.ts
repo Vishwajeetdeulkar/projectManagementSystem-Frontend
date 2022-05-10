@@ -373,10 +373,18 @@ export class ManagerDashboardComponent implements OnInit {
         this.taskData.splice(this.projectDisplayIdx,1);
         this.effortData.splice(this.projectDisplayIdx,1);
         this.addProjectDisplay();
-
+        this._snackBar.open("Project Deleted Successfully", 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       },
-      (error:any) => {
-        console.log(error);
+      (error:any) => { 
+        this._snackBar.open(error, 'Close', {
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition,
+        duration: 2* 1000,
+      });
       }
     );  
   }
@@ -437,6 +445,7 @@ export class ManagerDashboardComponent implements OnInit {
         );
         let projectEmployeeDetails:userDetails[] = [];
         response.users.forEach((employee:any) => {
+          if(employee.roles[0]==3){
           let userDetailsData = {
             id:employee.id,
             name:employee.name,
@@ -444,13 +453,23 @@ export class ManagerDashboardComponent implements OnInit {
             businessTitle:employee.businessTitle
           }
           projectEmployeeDetails.push(userDetailsData);
+        }
         })
         this.projectEmployeeData[this.projectDisplayIdx]=projectEmployeeDetails;
         this.teamDataSource.data = projectEmployeeDetails;
         console.log(this.projectEmployeeData);
+        this._snackBar.open("Employee added in project", 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       },
       (error:any)=>{
-        console.log(error);
+        this._snackBar.open(error, 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       }
     )
      this.addMember.setValue(null);
@@ -485,6 +504,7 @@ export class ManagerDashboardComponent implements OnInit {
         );
         let projectEmployeeDetails:userDetails[] = [];
         response.users.forEach((employee:any) => {
+          if(employee.roles[0]==3){
           let userDetailsData = {
             id:employee.id,
             name:employee.name,
@@ -492,13 +512,23 @@ export class ManagerDashboardComponent implements OnInit {
             businessTitle:employee.businessTitle
           }
           projectEmployeeDetails.push(userDetailsData);
+        }
         })
         this.projectEmployeeData[this.projectDisplayIdx]=projectEmployeeDetails;
         this.teamDataSource.data = projectEmployeeDetails;
         console.log(this.projectEmployeeData);
+        this._snackBar.open("Employee remove from project", 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       },
       (error:any)=>{
-
+        this._snackBar.open(error, 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       }
     )
   }
@@ -538,10 +568,18 @@ export class ManagerDashboardComponent implements OnInit {
         this.taskData[this.projectDisplayIdx]=projectTaskDetails;
         this.taskDataSource.data = projectTaskDetails;
         console.log(this.taskData);
-
+        this._snackBar.open("Task added in project", 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       },
       (error:any) => {
-        console.log(error);
+        this._snackBar.open(error, 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       }
     );
     this.taskDetails.desc='';
@@ -575,9 +613,18 @@ export class ManagerDashboardComponent implements OnInit {
         this.taskData[this.projectDisplayIdx]=projectTaskDetails;
         this.taskDataSource.data = projectTaskDetails;
         console.log(this.taskData);
+        this._snackBar.open("Remove task from project", 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       },
-      (error:any) => {
-        console.log(error);
+      (error:any) => { 
+        this._snackBar.open(error, 'Close', {
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition,
+        duration: 2* 1000,
+      });
       }
 
     );
@@ -599,9 +646,18 @@ export class ManagerDashboardComponent implements OnInit {
         }
         this.effortData[this.projectDisplayIdx] = effortDataDetails;
         this.chartOptions.series = effortDataDetails.effortSeries;
+        this._snackBar.open("Update Project Effort Successfully", 'Close', {
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+          duration: 2* 1000,
+        });
       },
-      (error:any) => {
-        console.log(error);
+      (error:any) => { 
+        this._snackBar.open(error, 'Close', {
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition,
+        duration: 2* 1000,
+      });
       }
 
     );

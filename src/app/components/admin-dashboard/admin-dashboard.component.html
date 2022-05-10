@@ -18,28 +18,28 @@
             <div class="col-4">
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
                     <mat-label >User Name</mat-label> 
-                    <input [(ngModel)]="newManagerData.username" name="rah" id="rah" type="text" class="form-control"  matInput>
+                    <input [(ngModel)]="newManagerData.username" name="rah" id="rah" type="text" class="form-control"  matInput required>
                 </mat-form-field>
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
                     <mat-label >Password</mat-label> 
-                    <input [(ngModel)]="newManagerData.password" name="rah" id="rah" type="passowrd" class="form-control"  matInput>
+                    <input [(ngModel)]="newManagerData.password" name="rah" id="rah" type="passowrd" class="form-control"  matInput required>
                 </mat-form-field>
             </div>
             
             <div class="col-4">
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
                     <mat-label >Name</mat-label> 
-                    <input [(ngModel)]="newManagerData.name" name="rah" id="rah" type="text" class="form-control"  matInput>
+                    <input [(ngModel)]="newManagerData.name" name="rah" id="rah" type="text" class="form-control"  matInput required>
                 </mat-form-field>
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
-                    <mat-label >Phone</mat-label> 
-                    <input [(ngModel)]="newManagerData.phone" name="rah" id="rah" type="text" class="form-control"  matInput>
+                    <mat-label >Phone Number</mat-label> 
+                    <input [(ngModel)]="newManagerData.phone" name="rah" id="rah" type="text" class="form-control" maxlength="10" minlength="10"  matInput required>
                 </mat-form-field>
             </div>
             <div class="col-4">
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
                     <mat-label >Bussiness Title</mat-label> 
-                    <input [(ngModel)]="newManagerData.businessTitle" name="rah" id="rah" type="text" class="form-control"  matInput>
+                    <input [(ngModel)]="newManagerData.businessTitle" name="rah" id="rah" type="text" class="form-control"  matInput required>
                 </mat-form-field>
                 <button  class="mx-2" type="button"  (click)="addUser(0)"   style="align-content: center;" mat-raised-button  color="primary">
                     <mat-icon>add</mat-icon>
@@ -101,28 +101,28 @@
             <div class="col-4">
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
                     <mat-label >User Name</mat-label> 
-                    <input [(ngModel)]="newEmployeeData.username" name="rah" id="rah" type="text" class="form-control"  matInput>
+                    <input [(ngModel)]="newEmployeeData.username" name="rah" id="rah" type="text" class="form-control"  matInput required>
                 </mat-form-field>
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
                     <mat-label >Password</mat-label> 
-                    <input [(ngModel)]="newEmployeeData.password" name="rah" id="rah" type="passowrd" class="form-control"  matInput>
+                    <input [(ngModel)]="newEmployeeData.password" name="rah" id="rah" type="passowrd" class="form-control"  matInput required>
                 </mat-form-field>
             </div>
             
             <div class="col-4">
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
                     <mat-label >Name</mat-label> 
-                    <input [(ngModel)]="newEmployeeData.name" name="rah" id="rah" type="text" class="form-control"  matInput>
+                    <input [(ngModel)]="newEmployeeData.name" name="rah" id="rah" type="text" class="form-control"  matInput required>
                 </mat-form-field>
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
-                    <mat-label >Phone</mat-label> 
-                    <input [(ngModel)]="newEmployeeData.phone" name="rah" id="rah" type="text" class="form-control"  matInput>
+                    <mat-label >Phone Number</mat-label> 
+                    <input [(ngModel)]="newEmployeeData.phone" name="rah" id="rah" type="text" class="form-control"  maxlength="10" minlength="10" matInput required>
                 </mat-form-field>
             </div>
             <div class="col-4">
                 <mat-form-field style="width: 100%;"  class="mx-2"  appearance="outline">
                     <mat-label >Bussiness Title</mat-label> 
-                    <input [(ngModel)]="newEmployeeData.businessTitle" name="rah" id="rah" type="text" class="form-control"  matInput>
+                    <input [(ngModel)]="newEmployeeData.businessTitle" name="rah" id="rah" type="text" class="form-control"  matInput required>
                 </mat-form-field>
                 <button  class="mx-2" type="button"  (click)="addUser(1)"   style="align-content: center;" mat-raised-button  color="primary">
                     <mat-icon>add</mat-icon>
