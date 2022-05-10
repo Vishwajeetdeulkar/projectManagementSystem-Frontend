@@ -55,13 +55,7 @@ export class AdminDashboardComponent implements OnInit {
   constructor(private adminService:AdminService) { }
 
   ngOnInit(): void {
-    if (!localStorage.getItem('foo')) { 
-      localStorage.setItem('foo', 'no reload') 
-      location.reload() 
-    } else {
-      localStorage.removeItem('foo') 
-    }
-
+  
     this.employeeDataSource = new MatTableDataSource<any>();
     this.managerDataSource = new MatTableDataSource<any>();
 

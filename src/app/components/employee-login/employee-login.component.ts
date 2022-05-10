@@ -27,7 +27,7 @@ export class EmployeeLoginComponent implements OnInit {
       this.loginService.employeePing().subscribe(
         (response:any)=>{
           console.log("get response of ping")
-          this.route.navigateByUrl("/employeeDashboard");
+          window.location.href = "/employeeDashboard";
         },
         (error:any) => {
           console.log(error);
@@ -45,7 +45,7 @@ export class EmployeeLoginComponent implements OnInit {
         this.loginService.employeePing().subscribe(
           (response:any)=>{
             console.log("get response of ping")
-            this.route.navigateByUrl("/employeeDashboard");
+            window.location.href = "/employeeDashboard";
           },
           (error:any) => {
             console.log(error);

@@ -28,7 +28,7 @@ export class AdminLoginComponent implements OnInit {
       this.loginService.adminPing().subscribe(
         (response:any)=>{
           console.log("get response of ping")
-          this.route.navigateByUrl("/adminDashboard");
+          window.location.href="/adminDashboard";
         },
         (error:any) => {
           console.log(error);
@@ -45,7 +45,7 @@ export class AdminLoginComponent implements OnInit {
           this.loginService.adminPing().subscribe(
             (response:any)=>{
               console.log("get response of ping")
-              this.route.navigateByUrl("/adminDashboard");
+              window.location.href= "/adminDashboard";    
             },
             (error:any) => {
               console.log(error);

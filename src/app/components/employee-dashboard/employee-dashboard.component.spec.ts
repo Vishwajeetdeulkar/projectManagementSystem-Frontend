@@ -1,4 +1,10 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { AuthguardService } from 'src/app/services/authguard.service';
+import { EmployeeService } from 'src/app/services/employee.service';
+import { LoginService } from 'src/app/services/login.service';
 
 import { EmployeeDashboardComponent } from './employee-dashboard.component';
 
@@ -8,7 +14,13 @@ describe('EmployeeDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EmployeeDashboardComponent ]
+      imports:[RouterTestingModule,HttpClientModule],
+      declarations: [ EmployeeDashboardComponent ],
+      providers:[
+        LoginService,
+        EmployeeService,
+        AuthguardService
+      ]
     })
     .compileComponents();
   });

@@ -26,7 +26,7 @@ export class ManagerLoginComponent implements OnInit {
       this.loginService.managerPing().subscribe(
         (response:any)=>{
           console.log("get response of ping")
-          this.route.navigateByUrl("/managerDashboard");
+          window.location.href="/managerDashboard";
         },
         (error:any) => {
           console.log(error);
@@ -44,7 +44,7 @@ export class ManagerLoginComponent implements OnInit {
           this.loginService.managerPing().subscribe(
             (response:any)=>{
               console.log("get response of ping")
-              this.route.navigateByUrl("/managerDashboard");
+              window.location.href="/managerDashboard";
             },
             (error:any) => {
               console.log(error);
