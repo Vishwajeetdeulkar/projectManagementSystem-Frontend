@@ -1,21 +1,22 @@
 import { HttpClient,HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ManagerService {
 
-  
-  url = "http://localhost:8086";
+
+  url = environment.apiURL;
 
   constructor(private router:Router,private http:HttpClient) { }
 
 
   addProject(projectDetails:any)
   {
-    
+
     let token = localStorage.getItem("SessionUser");
     let header = new HttpHeaders(
       {
@@ -33,7 +34,7 @@ export class ManagerService {
         Authorization  : "Bearer " + token
       }
     );
-    return this.http.post(`${this.url}/manager/updateProject`,projectDetails,{'headers':header}); 
+    return this.http.post(`${this.url}/manager/updateProject`,projectDetails,{'headers':header});
   }
 
   removeProject(projectId:any)
@@ -85,7 +86,7 @@ export class ManagerService {
         Authorization  : "Bearer " + token
       }
     );
-    return this.http.post(`${this.url}/manager/addUserToProject`,addUser,{'headers':header}); 
+    return this.http.post(`${this.url}/manager/addUserToProject`,addUser,{'headers':header});
   }
 
   removeUserFromProject(projectId:any,userId:any)
@@ -116,7 +117,7 @@ export class ManagerService {
         Authorization  : "Bearer " + token
       }
     );
-    return this.http.post(`${this.url}/manager/addTaskToProject`,addTask,{'headers':header}); 
+    return this.http.post(`${this.url}/manager/addTaskToProject`,addTask,{'headers':header});
   }
 
   removeTaskFromProject(projectId:any,taskId:any)
@@ -130,7 +131,7 @@ export class ManagerService {
         Authorization  : "Bearer " + token
       }
     );
-    return this.http.get(`${this.url}/manager/removeTaskFromProject`,{'headers':header,'params':params}); 
+    return this.http.get(`${this.url}/manager/removeTaskFromProject`,{'headers':header,'params':params});
   }
 
   updateEffortTable(projectId:any,effortTable:any)
@@ -153,6 +154,6 @@ export class ManagerService {
         Authorization  : "Bearer " + token
       }
     );
-    return this.http.post(`${this.url}/manager/updateEffortTable`,updateEffort,{'headers':header}); 
+    return this.http.post(`${this.url}/manager/updateEffortTable`,updateEffort,{'headers':header});
   }
 }
