@@ -1,13 +1,14 @@
-<mat-toolbar color="primary">
-    <p class="fs-3" routerLink="/" mat-button>
-      Project Management System
+<mat-toolbar style="padding-left: 35px;" color="primary">
+    <mat-icon style=" transform: scale(2);"  >collections_bookmark</mat-icon>
+    <p class="fs-2" style="margin: 20px;" routerLink="/" mat-button>   
+      ActiveCollab
     </p>
     
-    <span class="example-spacer"></span>
+  <span class="example-spacer"></span>
     
-    <button *ngIf="isLoggedIn" (click)="logout()"  mat-button>
-        Logout
-    </button>
+  <button *ngIf="isLoggedIn" (click)="logout()"  mat-button>
+      Logout
+  </button>
   
 </mat-toolbar>
   

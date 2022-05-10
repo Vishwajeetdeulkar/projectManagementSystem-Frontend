@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthguardService } from 'src/app/services/authguard.service';
@@ -17,7 +18,8 @@ describe('EmployeeLoginComponent', () => {
       declarations: [ EmployeeLoginComponent ],
       providers:[
         LoginService,
-        AuthguardService
+        AuthguardService,
+        MatSnackBar
       ]
     })
     .compileComponents();
