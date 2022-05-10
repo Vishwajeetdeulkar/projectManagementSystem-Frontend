@@ -152,12 +152,6 @@ export class ManagerDashboardComponent implements OnInit {
     this.taskDataSource = new MatTableDataSource<any>();
     this.taskDataSource.data = this.taskData;
 
-    if (!localStorage.getItem('foo')) { 
-      localStorage.setItem('foo', 'no reload') 
-      location.reload() 
-    } else {
-      localStorage.removeItem('foo') 
-    }
     if(this.auth.getToken())
     {
       this.loginService.managerPing().subscribe(
