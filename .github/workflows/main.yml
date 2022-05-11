@@ -38,16 +38,19 @@ jobs:
           npm config set legacy-peer-deps true
           npm install --configuration=production
           npm ci
+      - run: npm run build --configuration=production
+      - run:  npm run test-headless
+      - run: npm audit fix
       # build and test the apps
-      - name: build
-        run: |
-          npm run build --configuration=production
+#       - name: build
+#         run: |
+#           npm run build --configuration=production
           
-      - name: test
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgbm-dev
-          npm test --watch=false --browsers=ChromeHeadlessCI
+#       - name: test
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y libgbm-dev
+#           npm test --watch=false --browsers=ChromeHeadlessCI
 
       - name: checkout repo
         uses: actions/checkout@v2
