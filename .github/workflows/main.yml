@@ -38,9 +38,6 @@ jobs:
           npm config set legacy-peer-deps true
           npm install --configuration=production
           npm ci
-#       - run: npm run build --configuration=production
-#       - run:  npm test --watch=false --browsers=ChromeHeadlessCI
-#       - run: npm audit fix
       # build and test the apps
       - name: build
         run: |
